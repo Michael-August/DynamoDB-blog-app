@@ -4,6 +4,7 @@ import React from 'react'
 import { AiFillRead } from 'react-icons/ai'
 
 import banner from "@/public/images/profileimg.jpg"
+import Pagination from '@/components/Pagination'
 
 const page = () => {
     return (
@@ -26,7 +27,7 @@ const page = () => {
                     <BlogCard />
                 </div>
 
-
+                <Pagination page={`1`} totalPages={10} />
             </div>
         </div>
     )

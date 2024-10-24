@@ -25,7 +25,7 @@ const BlogCard: FC<Props> = ({ blog }) => {
         <>
             <div onClick={handleViewDetails} className="p-3 border cursor-pointer border-[#e3e3e3] rounded-lg hover:scale-105 ease-in hover:shadow-md transition-all hover:border-[#c6d0fb] hover:shadow-[#c6d0fb]">
                 <div className='w-fit -mx-3 -mt-3'>
-                    <Image className='w-[inherit]' src={blogImage} width={300} height={200} alt="blog img" />
+                    <Image className='w-[inherit] rounded-lg' src={blogImage} width={300} height={200} alt="blog img" />
                 </div>
 
                 {/* category */}

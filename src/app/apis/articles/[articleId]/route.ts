@@ -1,5 +1,6 @@
 import { uploadImage } from "@/lib/cloudinary";
 import { dynamoDb } from "@/lib/dynamo";
+import { ReturnValue } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -8,7 +9,7 @@ const GetHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         const params = {
-            TableName: 'YourDynamoDBTable',
+            TableName: 'Blog',
             Key: { id: articleId },
         };
 
@@ -39,7 +40,7 @@ const UpdateHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const params = {
-            TableName: 'BlogArticles',
+            TableName: 'Blog',
             Key: { id: articleId },
             UpdateExpression: 'set #title = :title, content = :content, imageUrl = if_not_exists(imageUrl, :imageUrl)',
             // ExpressionAttributeNames: { '#title': 'title' },
@@ -48,7 +49,7 @@ const UpdateHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 ':content': content,
                 ':imageUrl': imageUrl || '',
             },
-            ReturnValues: 'ALL_NEW',
+            ReturnValues: ReturnValue.ALL_NEW,
         };
 
         const command = new UpdateCommand(params);
@@ -65,7 +66,7 @@ const DeleteHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       const params = {
-        TableName: 'YourDynamoDBTable',
+        TableName: 'Blog',
         Key: { id: articleId },
       };
 
