@@ -1,9 +1,7 @@
 import BlogCard from '@/components/BlogCard'
-import Image from 'next/image'
 import React from 'react'
 import { AiFillRead } from 'react-icons/ai'
 
-import banner from "@/public/images/profileimg.jpg"
 import Pagination from '@/components/Pagination'
 
 const page = () => {
