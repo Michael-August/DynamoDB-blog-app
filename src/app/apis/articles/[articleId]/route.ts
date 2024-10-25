@@ -28,7 +28,11 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ article: data.Item, message: "Fetch successful", success: true, status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
   }
 }
 
@@ -67,8 +71,12 @@ export async function PUT(req: NextRequest) {
     const data = await dynamoDb.send(command);
 
     return NextResponse.json({ updatedArticle: data.Attributes, message: "Update successful", success: true, status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
   }
 }
 
@@ -91,7 +99,11 @@ export async function DELETE(req: NextRequest) {
     await dynamoDb.send(command);
 
     return NextResponse.json({ message: 'Item deleted successfully', success: true, status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
   }
 }
