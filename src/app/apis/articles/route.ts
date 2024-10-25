@@ -8,11 +8,7 @@ import { Readable } from 'stream';
 import { IncomingMessage } from 'http';
 import { NextRequest, NextResponse } from "next/server";
 
-export const config = {
-  api: {
-    bodyParser: false
-  },
-};
+export const runtime = 'nodejs';
 
 async function parseFormData(req: NextRequest): Promise<{ fields: any, files: any }> {
   return new Promise((resolve, reject) => {
