@@ -9,15 +9,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = 'nodejs';
 
-async function parseFormData(req: NextRequest): Promise<{ fields: any, files: any }> {
+interface FileData {
+  filename: string;
+  encoding: string;
+  mimeType: string;
+  buffer: Buffer;
+}
+
+interface FormData {
+  fields: { [key: string]: string };
+  files: FileData[];
+}
+
+async function parseFormData(req: NextRequest): Promise<FormData> {
   return new Promise((resolve, reject) => {
     const bb = busboy({ headers: req.headers });
-    const fields: any = {};
-    const files: any = [];
+    const fields: { [key: string]: string } = {};
+    const files: FileData[] = [];
 
     bb.on('file', (name, file, info) => {
       const { filename, encoding, mimeType } = info;
-      const chunks: any[] = [];
+      const chunks: Buffer[] = [] = [];
 
       file.on('data', (data) => {
         chunks.push(data);
@@ -50,7 +62,7 @@ export async function POST(req: NextRequest) {
     const { fields, files } = await parseFormData(req);
 
     const { title, content } = fields;
-    const imageFile = files.image;
+    const imageFile = files[0];
 
     const id = uuidv4();
 
@@ -77,12 +89,12 @@ export async function POST(req: NextRequest) {
       status: 201,
     }, { status: 201 });
 
-  } catch (error: any) {
-    return NextResponse.json({
-      message: error.message,
-      success: false,
-      status: 500,
-    }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
   }
 }
 
@@ -102,11 +114,11 @@ export async function GET() {
       status: 200,
     }, { status: 200 });
 
-  } catch (error: any) {
-    return NextResponse.json({
-      message: error.message,
-      success: false,
-      status: 500,
-    }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
   }
 }

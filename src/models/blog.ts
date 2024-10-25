@@ -46,7 +46,7 @@ export type BlogPost = {
     enableComments: boolean;
     enableCommentReplies: boolean;
     comments: Comment[];
-    media: any[];
+    media: string[];
     createdBy?: "Ewere Diagboya";
     createdAt: Date;
     updatedBy?: "Ewere Diagboya";

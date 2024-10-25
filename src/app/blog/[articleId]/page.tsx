@@ -8,9 +8,9 @@ import Image from 'next/image';
 
 import blogImg from "@/public/images/blogBodyImg.jpg"
 
-const page = () => {
+const Page = () => {
 
-    const [blog, setBlog] = useState<BlogPost | null>(null);
+    const [blog] = useState<BlogPost | null>(null);
     
     return (
         <div className="">
@@ -63,4 +63,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

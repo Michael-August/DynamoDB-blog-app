@@ -22,7 +22,7 @@ const NavBar = () => {
                 </li> */}
             </ul>
             <div className='border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
-                Ewere's Blog
+                Eweres Blog
             </div>
         </nav>
     )

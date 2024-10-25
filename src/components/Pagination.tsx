@@ -17,7 +17,7 @@ const Pagination: FC<PaginationProps> = (props) => {
     const { page = 1, totalPages } = props
     const [currentPage, setCurrentPage] = useState(Math.min(Math.max(Number(page), 1), totalPages));
 
-    let pageRange = 3;
+    const pageRange = 3;
 
     const getPageNumbers = () => {
         const pageNumbers = [];

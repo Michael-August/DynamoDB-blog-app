@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ article: data.Item, message: "Fetch successful", success: true, status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
     } else {
