@@ -2,27 +2,11 @@ import { dynamoDb } from "@/lib/dynamo";
 import { PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from 'uuid';
 
-import busboy from 'busboy';
-import { Readable } from 'stream';
-import { NextRequest, NextResponse } from "next/server";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
-import multer from "multer";
 import { UploadApiResponse } from "cloudinary";
 
 export const runtime = 'nodejs';
-
-// Configure Cloudinary storage for Multer
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    resource_type: 'auto',
-    folder: 'uploads',
-    public_id: (req: Request, file: any) => `${Date.now()}-${file.originalname}`
-  } as any,
-});
-
-const upload = multer({ storage });
 
 export async function POST(req: Request) {
   try {
