@@ -1,4 +1,3 @@
-import { uploadImage } from "@/lib/cloudinary";
 import { dynamoDb } from "@/lib/dynamo";
 import { PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from 'uuid';
@@ -6,68 +5,52 @@ import { v4 as uuidv4 } from 'uuid';
 import busboy from 'busboy';
 import { Readable } from 'stream';
 import { NextRequest, NextResponse } from "next/server";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "@/lib/cloudinary";
+import multer from "multer";
+import { UploadApiResponse } from "cloudinary";
 
 export const runtime = 'nodejs';
 
-interface FileData {
-  filename: string;
-  encoding: string;
-  mimeType: string;
-  buffer: Buffer;
-}
+// Configure Cloudinary storage for Multer
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    resource_type: 'auto',
+    folder: 'uploads',
+    public_id: (req: Request, file: any) => `${Date.now()}-${file.originalname}`
+  } as any,
+});
 
-interface FormData {
-  fields: { [key: string]: string };
-  files: FileData[];
-}
+const upload = multer({ storage });
 
-async function parseFormData(req: NextRequest): Promise<FormData> {
-  return new Promise((resolve, reject) => {
-    const bb = busboy({ headers: req.headers });
-    const fields: { [key: string]: string } = {};
-    const files: FileData[] = [];
-
-    bb.on('file', (name, file, info) => {
-      const { filename, encoding, mimeType } = info;
-      const chunks: Buffer[] = [] = [];
-
-      file.on('data', (data) => {
-        chunks.push(data);
-      });
-
-      file.on('end', () => {
-        files.push({ filename, encoding, mimeType, buffer: Buffer.concat(chunks) });
-      });
-    });
-
-    bb.on('field', (name, value) => {
-      fields[name] = value;
-    });
-
-    bb.on('finish', () => {
-      resolve({ fields, files });
-    });
-
-    bb.on('error', (err) => {
-      reject(err);
-    });
-
-    const reqBody = Readable.from(req.body);
-    reqBody.pipe(bb);
-  });
-}
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { fields, files } = await parseFormData(req);
+    const formData = await req.formData();
+    const file = formData.get('image') as File;
+    const title = formData.get('title')
+    const content = formData.get('content')
 
-    const { title, content } = fields;
-    const imageFile = files[0];
+    if (!file) {
+      return Response.json({ error: 'No file uploaded' }, { status: 400 });
+    }
+
+    const fileBuffer = await file.arrayBuffer();
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          { resource_type: 'auto', folder: "blogImages" },
+          (error, result) => {
+            if (error || !result) reject(error);
+            else resolve(result);
+          },
+        )
+        .end(Buffer.from(fileBuffer));
+    });
 
     const id = uuidv4();
 
-    const uploadedImage = await uploadImage(imageFile);
-    const imageUrl = uploadedImage.secure_url;
+    const imageUrl = result.secure_url
 
     const params = {
       TableName: 'Blog',
@@ -84,6 +67,7 @@ export async function POST(req: NextRequest) {
     await dynamoDb.send(command);
 
     return NextResponse.json({
+      article: params.Item,
       message: 'Article created successfully',
       success: true,
       status: 201,

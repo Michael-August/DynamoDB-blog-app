@@ -1,8 +1,9 @@
-import { uploadImage } from "@/lib/cloudinary";
 import { dynamoDb } from "@/lib/dynamo";
 import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextRequest, NextResponse } from "next/server";
 import { ReturnValue } from "@aws-sdk/client-dynamodb";
+import { UploadApiResponse } from "cloudinary";
+import cloudinary from "@/lib/cloudinary";
 
 // GET Request
 export async function GET(req: NextRequest) {
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
 }
 
 // PUT Request
-export async function PUT(req: NextRequest) {
+export async function PUT(req: Request) {
   const { searchParams } = new URL(req.url);
   const articleId = searchParams.get('articleId');
 
@@ -46,12 +47,26 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    const { title, content, image } = await req.json();
+    const formData = await req.formData();
+    const file = formData.get('image') as File;
+    const title = formData.get('title')
+    const content = formData.get('content')
     let imageUrl;
 
-    if (image) {
-      const uploadedImage = await uploadImage(image);
-      imageUrl = uploadedImage.secure_url;
+    if (file) {
+      const fileBuffer = await file.arrayBuffer();
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            { resource_type: 'auto', folder: "blogImages" },
+            (error, result) => {
+              if (error || !result) reject(error);
+              else resolve(result);
+            },
+          )
+          .end(Buffer.from(fileBuffer));
+      });
+      imageUrl = result.secure_url;
     }
 
     const params = {
