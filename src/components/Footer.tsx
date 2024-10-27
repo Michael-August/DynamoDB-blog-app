@@ -8,7 +8,7 @@ const Footer = () => {
             <div className="font-semibold text-2xl">
                 Ewere Diagboya 
             </div>
-            <div className="font-semibold text-base mb-5">
+            <div className="font-semibold text-base mb-5 text-center">
                 © {new Date().getFullYear()} Ewere Diagboya | All Right Reserved 
             </div>
             <div className="flex gap-5">

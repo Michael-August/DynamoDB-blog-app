@@ -1,10 +1,32 @@
+"use client"
+
 import BlogCard from "@/components/BlogCard";
 import { AiFillRead } from "react-icons/ai";
 import Image from "next/image";
 
-import banner from "@/public/images/profileimg.jpg"
+import banner from "@/public/images/main-image.jpg"
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Home() {
+  const [articles, setArticles] = useState([]);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('/apis/articles');
+            setArticles(response.data?.posts.slice(0, 8).reverse());
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+  }, [])
   return (
     <div>
       <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
@@ -26,14 +48,14 @@ export default function Home() {
           <span className="font-semibold text-3xl">Latest Posts</span>
         </div>
 
-        <div className="grid :grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-          <BlogCard />
-          <BlogCard />
-          <BlogCard />
-          <BlogCard />
-          <BlogCard />
-          <BlogCard />
-        </div>
+        {loading ?
+          <p>Loading...</p> :
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+              {articles.map((article: any) => (
+                  <BlogCard blog={article} key={article.id} />
+              ))}
+          </div>
+        }
       </div>
     </div>
   );

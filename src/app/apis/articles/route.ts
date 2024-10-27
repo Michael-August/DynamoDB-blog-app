@@ -15,6 +15,10 @@ export async function POST(req: Request) {
     const title = formData.get('title')
     const content = formData.get('content')
 
+    if (!title) {
+      return Response.json({ error: 'Please provide Title' }, { status: 400 });
+    }
+
     if (!file) {
       return Response.json({ error: 'No file uploaded' }, { status: 400 });
     }

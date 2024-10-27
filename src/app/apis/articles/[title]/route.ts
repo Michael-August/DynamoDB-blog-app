@@ -1,33 +1,38 @@
 import { dynamoDb } from "@/lib/dynamo";
 import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextRequest, NextResponse } from "next/server";
-import { ReturnValue } from "@aws-sdk/client-dynamodb";
+import { QueryCommand, ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 // GET Request
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const articleId = searchParams.get('articleId');
+export async function GET(req: NextRequest, {params}: any) {
+  const { title } = params;
 
-  if (!articleId) {
-    return NextResponse.json({ message: "Missing articleId parameter", success: false, status: 400 }, { status: 400 });
+  if (!title) {
+    return NextResponse.json({ message: "Missing article title parameter", success: false, status: 400 }, { status: 400 });
   }
 
   try {
-    const params = {
-      TableName: 'Blog',
-      Key: { id: articleId },
-    };
+    const command = new QueryCommand({
+      TableName: 'Blog', // Replace with your table name
+      IndexName: 'TitleIndex', // Replace with your GSI name
+      KeyConditionExpression: 'title = :title',
+      ExpressionAttributeValues: {
+        ':title': { S: title },
+      },
+    });
 
-    const command = new GetCommand(params);
     const data = await dynamoDb.send(command);
 
-    if (!data.Item) {
-      return NextResponse.json({ message: 'Article not found', success: false, status: 404 }, { status: 404 });
+    if (!data.Items || data.Items.length === 0) {
+      return NextResponse.json({ message: "Blog post not found", success: false, status: 404 }, { status: 404 });
     }
 
-    return NextResponse.json({ article: data.Item, message: "Fetch successful", success: true, status: 200 });
+    const blogPost = unmarshall(data?.Items[0]);
+
+    return NextResponse.json({ article: blogPost, message: "Fetch successful", success: true, status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });

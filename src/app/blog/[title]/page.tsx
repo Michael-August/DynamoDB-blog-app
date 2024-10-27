@@ -1,22 +1,40 @@
 "use client"
 
-import { BlogPost } from '@/models/blog';
 import moment from 'moment';
-import authorImage from "@/public/images/profileimg.jpg"
-import React, { useState } from 'react'
+import authorImage from "@/public/images/author-image.jpg"
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import blogImg from "@/public/images/blogBodyImg.jpg"
 
-const Page = () => {
+const Page = ({params}: any) => {
 
-    const [blog] = useState<BlogPost | null>(null);
+    const [blog, setBlog] = useState<any>(null);
+    const { title } = params;
+    // const [error, setError] = useState(null);
+    
+    useEffect(() => {
+        const fetchBlog = async () => {
+        try {
+            const res = await fetch(`/apis/articles/${title}`);
+            if (!res.ok) {
+            throw new Error(await res.text());
+            }
+            const data = await res.json();
+            setBlog(data);
+        } catch (err) {
+            
+        }
+        };
+
+        fetchBlog();
+    }, [title]);
     
     return (
         <div className="">
-            <div className="my-4">
+            {/* <div className="my-4">
                 <span className="text-[#f2f4fb] bg-[#4b6bfb] rounded-[7px] px-2 py-1 text-center capitalize">{ blog?.category.toLowerCase() || 'General'}</span>
-            </div>
+            </div> */}
 
             {/* title */}
             <div>
@@ -33,10 +51,10 @@ const Page = () => {
                 <div className="flex justify-start gap-2">
                     {/* author img */}
                     <div>
-                        <Image width={200} height={100} src={blog?.author ? blog.author : authorImage} className="rounded-full w-[30px] h-[30px]" alt="author Image" />
+                        <Image width={200} height={100} src={authorImage} className="rounded-full w-[30px] h-[30px]" alt="author Image" />
                     </div>
                     <div>
-                        <p className="text-black">{blog?.author || "Ewere Diagboya"}</p>
+                        <p className="text-black">{"Ewere Diagboya"}</p>
                     </div>
                 </div>
 
@@ -50,13 +68,13 @@ const Page = () => {
 
             {/* Blog Image */}
             <div className='my-4 w-full h-[30rem]'>
-                <Image className='w-[inherit] h-[inherit] object-cover rounded-3xl' src={blogImg} width={100} height={100} alt="blog img" />
+                <Image className='w-[inherit] h-[inherit] object-cover rounded-3xl' src={blog?.imageUrl || blogImg} width={100} height={100} alt="blog img" />
             </div>
 
             {/* Content section */}
             <div className="my-8">
                 <p className="text-black">
-                    { blog?.content ||"hjdgkfwuif hjdfkjhdk" }
+                    { blog?.content }
                 </p>
             </div>
         </div>
