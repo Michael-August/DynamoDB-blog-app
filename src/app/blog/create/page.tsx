@@ -1,13 +1,15 @@
 "use client"
 
 import React, { useState } from 'react'
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import Image from 'next/image';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import dynamic from 'next/dynamic';
+
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
 const Page = () => {
     const [imagePreview, setImagePreview] = useState<any>(null);
