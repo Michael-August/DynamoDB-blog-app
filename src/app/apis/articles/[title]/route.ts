@@ -1,5 +1,5 @@
 import { dynamoDb } from "@/lib/dynamo";
-import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextRequest, NextResponse } from "next/server";
 import { QueryCommand, ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
