@@ -7,10 +7,10 @@ import Image from "next/image";
 import banner from "@/public/images/main-image.jpg"
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
-  const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,10 +18,10 @@ export default function Home() {
         try {
             const response = await axios.get('/apis/articles');
             setArticles(response.data?.posts.slice(0, 8).reverse());
-        } catch (error) {
-            setError(error);
+        } catch (error: any) {
+          toast.error(`${error.message}`)
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
     };
 

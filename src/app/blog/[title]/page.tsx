@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import blogImg from "@/public/images/blogBodyImg.jpg"
+import { toast } from 'react-toastify';
 
 const Page = ({params}: any) => {
 
@@ -15,16 +16,16 @@ const Page = ({params}: any) => {
     
     useEffect(() => {
         const fetchBlog = async () => {
-        try {
-            const res = await fetch(`/apis/articles/${title}`);
-            if (!res.ok) {
-            throw new Error(await res.text());
+            try {
+                const res = await fetch(`/apis/articles/${title}`);
+                if (!res.ok) {
+                throw new Error(await res.text());
+                }
+                const data = await res.json();
+                setBlog(data);
+            } catch (err: any) {
+                toast.error(`${err.message}`)
             }
-            const data = await res.json();
-            setBlog(data);
-        } catch (err) {
-            
-        }
         };
 
         fetchBlog();

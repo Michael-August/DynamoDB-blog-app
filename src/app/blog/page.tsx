@@ -8,7 +8,7 @@ import Pagination from '@/components/Pagination'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const page = () => {
+const Page = () => {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -52,4 +52,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
