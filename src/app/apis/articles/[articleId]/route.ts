@@ -6,7 +6,6 @@ import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 
 // GET Request
-// @ts-ignore
 export async function GET(req: Request, {params}: { params: { articleId: string } }) {
   const { articleId } = params;
 
@@ -95,7 +94,6 @@ export async function PUT(req: Request, {params}: { params: { articleId: string 
 }
 
 // DELETE Request
-// @ts-ignore
 export async function DELETE(req: Request, {params}: { params: { articleId: string } }) {
   const { articleId } = params;
 
