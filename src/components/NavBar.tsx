@@ -1,8 +1,17 @@
+"use client"
+
 import Link from 'next/link'
-import React from 'react'
-import { AiOutlineMenu } from 'react-icons/ai'
+import React, { useState } from 'react'
+import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai'
 
 const NavBar = () => {
+
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen)
+    }
+    
     return (
         <div className='relative '>
             <nav className='fixed bg-[#f7fbff] z-50 top-0 flex items-center w-full justify-between mx-auto px-2 md:px-4 container py-4'>
@@ -26,13 +35,23 @@ const NavBar = () => {
                 <div className='hidden lg:block border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                     Eweres Blog
                 </div>
-                <div className="icon block lg:hidden cursor-pointer">
-                    <AiOutlineMenu />
+                <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
+                    {isMobileMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
                 </div>
             </nav>
-            {/* <div className={`for-mobile lg:hidden absolute top-0 left-0 w-screen h-screen bg-white`}>
-
-            </div> */}
+            {isMobileMenuOpen && (
+                <div className="for-mobile lg:hidden fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-4">
+                    <Link href="/" onClick={toggleMobileMenu} className="text-sm font-medium">
+                        Home
+                    </Link>
+                    <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
+                        Blog
+                    </Link>
+                    <Link href="/contact" onClick={toggleMobileMenu} className="text-sm font-medium">
+                        Contact
+                    </Link>
+                </div>
+            )}
         </div>
     )
 }

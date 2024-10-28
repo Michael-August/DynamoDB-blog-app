@@ -1,36 +1,31 @@
 import { dynamoDb } from "@/lib/dynamo";
-import { DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextRequest, NextResponse } from "next/server";
-import { QueryCommand, ReturnValue } from "@aws-sdk/client-dynamodb";
+import { ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 // GET Request
-export async function GET(req: NextRequest, {params}: any) {
-  const { title } = params;
+export async function GET(req: NextRequest, {params}: { params: { articleId: string } }) {
+  const { articleId } = params;
 
-  if (!title) {
-    return NextResponse.json({ message: "Missing article title parameter", success: false, status: 400 }, { status: 400 });
+  if (!articleId || typeof articleId !== 'string') {
+    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
   }
 
   try {
-    const command = new QueryCommand({
-      TableName: 'Blog', // Replace with your table name
-      IndexName: 'TitleIndex', // Replace with your GSI name
-      KeyConditionExpression: 'title = :title',
-      ExpressionAttributeValues: {
-        ':title': { S: title },
-      },
-    });
+    const dynamoParams = {
+      TableName: 'Blog',
+      Key: { id: articleId },
+    };
 
-    const data = await dynamoDb.send(command);
+    const data = await dynamoDb.send(new GetCommand(dynamoParams));
+    
+    if (!data.Item) return NextResponse.json({ message: "Blog post not found", success: false, status: 404 }, { status: 404 });
 
-    if (!data.Items || data.Items.length === 0) {
-      return NextResponse.json({ message: "Blog post not found", success: false, status: 404 }, { status: 404 });
-    }
 
-    const blogPost = unmarshall(data?.Items[0]);
+    const blogPost = data.Item;
 
     return NextResponse.json({ article: blogPost, message: "Fetch successful", success: true, status: 200 });
   } catch (error: unknown) {

@@ -41,7 +41,7 @@ const Pagination: FC<PaginationProps> = (props) => {
     const pages = getPageNumbers()
     
     return (
-		<div className="flex items-center justify-end gap-2 text-black">
+		<div className="flex items-center justify-center mt-5 lg:justify-end gap-2 text-black">
             <Link
                 onClick={() => setCurrentPage(currentPage - 1)}
 				className={clsx(
