@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
-import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 // GET Request
-export async function GET(req: NextRequest, {params}: { params: { articleId: string } }) {
+// @ts-ignore
+export async function GET(req: Request, {params}: { params: { articleId: string } }) {
   const { articleId } = params;
 
   if (!articleId || typeof articleId !== 'string') {
@@ -38,12 +38,11 @@ export async function GET(req: NextRequest, {params}: { params: { articleId: str
 }
 
 // PUT Request
-export async function PUT(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const articleId = searchParams.get('articleId');
+export async function PUT(req: Request, {params}: { params: { articleId: string } }) {
+  const { articleId } = params;
 
-  if (!articleId) {
-    return NextResponse.json({ message: "Missing articleId parameter", success: false, status: 400 }, { status: 400 });
+  if (!articleId || typeof articleId !== 'string') {
+    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
   }
 
   try {
@@ -96,12 +95,12 @@ export async function PUT(req: Request) {
 }
 
 // DELETE Request
-export async function DELETE(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const articleId = searchParams.get('articleId');
+// @ts-ignore
+export async function DELETE(req: Request, {params}: { params: { articleId: string } }) {
+  const { articleId } = params;
 
-  if (!articleId) {
-    return NextResponse.json({ message: "Missing articleId parameter", success: false, status: 400 }, { status: 400 });
+  if (!articleId || typeof articleId !== 'string') {
+    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
   }
 
   try {

@@ -9,7 +9,6 @@ import blogImg from "@/public/images/blogBodyImg.jpg"
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-import "easymde/dist/easymde.min.css";
 import ReactMarkdown from 'react-markdown';
 
 const Page = ({params}: { params: { articleId: string } }) => {
@@ -74,7 +73,7 @@ const Page = ({params}: { params: { articleId: string } }) => {
 
                     {/* Content section */}
                     <div className="my-8">
-                        <ReactMarkdown children={blog?.content} />
+                        <ReactMarkdown>{blog?.content}</ReactMarkdown>
                     </div>
                 </div>
             }
