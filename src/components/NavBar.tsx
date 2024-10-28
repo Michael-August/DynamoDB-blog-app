@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
 import { AiOutlineMenu } from 'react-icons/ai'
-import { FaHamburger } from 'react-icons/fa'
-import { PiHamburger } from 'react-icons/pi'
 
 const NavBar = () => {
     return (
