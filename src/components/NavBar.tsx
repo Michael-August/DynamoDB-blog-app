@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai'
 
@@ -11,6 +12,8 @@ const NavBar = () => {
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen)
     }
+
+    const pathname = usePathname();
     
     return (
         <div className='relative '>
@@ -26,7 +29,10 @@ const NavBar = () => {
                         <Link href={"/blog"}>Blog</Link>
                     </li>
                     <li>
-                        <Link href={"/blog"}>Contact</Link>
+                        {pathname === "/admin" ?
+                            <Link href={"/admin/create"}>Create</Link> :
+                            <Link href={"/blog"}>Contact</Link>
+                        }
                     </li>
                     {/* <li>
                         <Link href={"/blog"}>Blog</Link>
