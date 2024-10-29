@@ -74,7 +74,7 @@ const Page = () => {
       {loading ? <p>Loading...</p> : 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4'>
         {articles.map((article: any, index:number) => (
-          <div onClick={() => toggleActionsCard(index)} className="relative p-3 border border-[#e3e3e3] rounded-lg mb-10">
+          <div key={article.id} onClick={() => toggleActionsCard(index)} className="relative p-3 border border-[#e3e3e3] rounded-lg mb-10">
             <div className="menu absolute cursor-pointer top-2 right-2">
               <FaEllipsisV onClick={() => toggleActionsCard(index)} className='text-gray-600' />
             </div>
