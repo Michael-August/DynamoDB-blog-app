@@ -46,25 +46,29 @@ export async function PUT(req: Request, {params}: { params: { articleId: string 
 
   try {
     const formData = await req.formData();
-    const file = formData.get('image') as File;
     const title = formData.get('title')
     const content = formData.get('content')
     let imageUrl;
 
-    if (file) {
-      const fileBuffer = await file.arrayBuffer();
-      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream(
-            { resource_type: 'auto', folder: "blogImages" },
-            (error, result) => {
-              if (error || !result) reject(error);
-              else resolve(result);
-            },
-          )
-          .end(Buffer.from(fileBuffer));
-      });
-      imageUrl = result.secure_url;
+    if (formData.get("imageUrl")) {
+      imageUrl = formData.get("imageUrl")
+    } else {
+      const file = formData.get('image') as File;
+      if (file) {
+        const fileBuffer = await file.arrayBuffer();
+        const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(
+              { resource_type: 'auto', folder: "blogImages" },
+              (error, result) => {
+                if (error || !result) reject(error);
+                else resolve(result);
+              },
+            )
+            .end(Buffer.from(fileBuffer));
+        });
+        imageUrl = result.secure_url;
+      }
     }
 
     const params = {

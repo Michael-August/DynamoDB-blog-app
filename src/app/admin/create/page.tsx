@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import Image from 'next/image';
@@ -15,6 +15,8 @@ const Page = () => {
     const [imagePreview, setImagePreview] = useState<any>(null);
 
     const router = useRouter()
+    const [article, setArticle] = useState<any>(null);
+    const articleId = localStorage.getItem("articleId")
 
     const {
         register,
@@ -28,7 +30,7 @@ const Page = () => {
         const reader = new FileReader();
 
         reader.onload = () => {
-        const base64String = reader.result;
+            const base64String = reader.result;
             setImagePreview(base64String);
         };
 
@@ -38,19 +40,46 @@ const Page = () => {
 
     const onSubmit = async (data: any) => {
         const formData = new FormData();
-        formData.append('image', data.image[0]);
+        
+        if (data.image && data.image[0]) {
+            formData.append('image', data.image[0]);
+        } else if (article?.imageUrl) {
+            formData.append('imageUrl', article.imageUrl);
+        }
+
         formData.append('title', data.title);
         formData.append('content', data.content);
 
         try {
-            const response = await axios.post('/apis/articles', formData);
+            const endpoint = article ? `/apis/articles/${articleId}` : '/apis/articles';
+            const method = article ? 'put' : 'post';
+
+            const response = await axios({ method, url: endpoint, data: formData });
             toast.success(`${response.data?.message}`)
-            router.push("/blog")
+            router.push("/admin")
         } catch (error: any) {
             toast.error(`${error?.message}`)
             console.error(error);
         }
     };
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`/apis/articles/${articleId}`);
+            const fetchedArticle = response.data?.article;
+            setArticle(response.data?.article);
+
+            setValue("title", fetchedArticle.title);
+            setValue("content", fetchedArticle.content);
+            setImagePreview(fetchedArticle.imageUrl);
+        } catch (error: any) {
+            toast.error(error.message)
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [articleId])
     
     return (
         <div className='form container mx-auto lg:px-24'>
