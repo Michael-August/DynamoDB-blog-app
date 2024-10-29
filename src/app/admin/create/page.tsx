@@ -16,7 +16,7 @@ const Page = () => {
 
     const router = useRouter()
     const [article, setArticle] = useState<any>(null);
-    const articleId = localStorage.getItem("articleId")
+    let articleId: string = "";
 
     const {
         register,
@@ -40,7 +40,7 @@ const Page = () => {
 
     const onSubmit = async (data: any) => {
         const formData = new FormData();
-        
+
         if (data.image && data.image[0]) {
             formData.append('image', data.image[0]);
         } else if (article?.imageUrl) {
@@ -64,6 +64,7 @@ const Page = () => {
     };
 
     const fetchData = async () => {
+        articleId = localStorage.getItem("articleId") as string
         try {
             const response = await axios.get(`/apis/articles/${articleId}`);
             const fetchedArticle = response.data?.article;
