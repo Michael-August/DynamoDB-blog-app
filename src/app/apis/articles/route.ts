@@ -2,7 +2,7 @@ import { dynamoDb } from "@/lib/dynamo";
 import { PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from 'uuid';
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import { UploadApiResponse } from "cloudinary";
 
@@ -70,10 +70,11 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const params = {
       TableName: 'Blog',
+      
     };
 
     const command = new ScanCommand(params);

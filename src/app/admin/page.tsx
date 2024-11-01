@@ -31,8 +31,13 @@ const Page = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [])
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/auth');
+    } else {
+      fetchData();
+    }
+  }, [router]);
 
   const handleViewDetails = (id: string) => {
     // if (!blog) return;

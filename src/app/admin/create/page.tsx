@@ -79,6 +79,13 @@ const Page = () => {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/auth');
+        }
+    }, [router]);
+
+    useEffect(() => {
         fetchData();
     }, [articleId])
     

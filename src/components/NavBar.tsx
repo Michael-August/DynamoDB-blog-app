@@ -26,6 +26,9 @@ const NavBar = () => {
                         <Link href={"/"}>Home</Link>
                     </li>
                     <li>
+                        <Link href={"/about"}>About</Link>
+                    </li>
+                    <li>
                         <Link href={"/blog"}>Blog</Link>
                     </li>
                     <li>
@@ -53,12 +56,10 @@ const NavBar = () => {
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
                     </Link>
-                    <li>
-                        {pathname === "/admin" ?
-                            <Link href={"/admin/create"}>Create</Link> :
-                            <Link href={"/blog"}>Contact</Link>
-                        }
-                    </li>
+                    {pathname === "/admin" ?
+                        <Link href={"/admin/create"}>Create</Link> :
+                        <Link href={"/blog"}>Contact</Link>
+                    }
                 </div>
             )}
         </div>
