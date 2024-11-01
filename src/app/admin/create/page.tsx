@@ -113,7 +113,8 @@ const Page = () => {
                         
                     </div>
 
-                    <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create</button>
+                    {!articleId ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
+                    : <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>}
                 </form>
             </div>
         </div>

@@ -53,9 +53,12 @@ const NavBar = () => {
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
                     </Link>
-                    <Link href="/contact" onClick={toggleMobileMenu} className="text-sm font-medium">
-                        Contact
-                    </Link>
+                    <li>
+                        {pathname === "/admin" ?
+                            <Link href={"/admin/create"}>Create</Link> :
+                            <Link href={"/blog"}>Contact</Link>
+                        }
+                    </li>
                 </div>
             )}
         </div>
