@@ -11,7 +11,7 @@ import axios from 'axios';
 
 import ReactMarkdown from 'react-markdown';
 
-const Page = ({params}: { params: { articleId: string } }) => {
+const Page = ({params}: { params: { slug: string } }) => {
 
     const [blog, setBlog] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ const Page = ({params}: { params: { articleId: string } }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/apis/articles/${params.articleId}`);
+                const response = await axios.get(`/apis/articles/${params.slug}`);
                 setBlog(response.data?.article);
             } catch (error: any) {
                 toast.error(error.message)
@@ -29,7 +29,7 @@ const Page = ({params}: { params: { articleId: string } }) => {
         };
 
         fetchData();
-    }, [params.articleId])
+    }, [params.slug])
     
     return (
         <>

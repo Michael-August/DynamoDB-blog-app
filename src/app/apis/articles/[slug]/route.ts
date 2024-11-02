@@ -1,30 +1,36 @@
 import { dynamoDb } from "@/lib/dynamo";
-import { DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { NextRequest, NextResponse } from "next/server";
 import { ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 
 // GET Request
-export async function GET(req: Request, {params}: { params: { articleId: string } }) {
-  const { articleId } = params;
+export async function GET(req: Request, {params}: { params: { slug: string } }) {
+  const { slug } = params;
 
-  if (!articleId || typeof articleId !== 'string') {
-    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
+  if (!slug || typeof slug !== 'string') {
+    return NextResponse.json({ message: "Invalid slug", success: false, status: 400 }, { status: 400 });
   }
 
   try {
     const dynamoParams = {
       TableName: 'Blog',
-      Key: { id: articleId },
+      IndexName: 'slug-index',
+      KeyConditionExpression: 'slug = :slug',
+      ExpressionAttributeValues: {
+        ':slug': slug,
+      },
     };
 
-    const data = await dynamoDb.send(new GetCommand(dynamoParams));
+
+    const data = await dynamoDb.send(new QueryCommand(dynamoParams));
     
-    if (!data.Item) return NextResponse.json({ message: "Blog post not found", success: false, status: 404 }, { status: 404 });
+    if (!data.Items || data.Items.length === 0) {
+      return NextResponse.json({ message: "Article not found", success: false, status: 404 }, { status: 404 });
+    }
 
-
-    const blogPost = data.Item;
+    const blogPost = data.Items[0];
 
     return NextResponse.json({ article: blogPost, message: "Fetch successful", success: true, status: 200 });
   } catch (error: unknown) {
@@ -37,17 +43,19 @@ export async function GET(req: Request, {params}: { params: { articleId: string 
 }
 
 // PUT Request
-export async function PUT(req: Request, {params}: { params: { articleId: string } }) {
-  const { articleId } = params;
+export async function PUT(req: Request, { params }: { params: { slug: string } }) {
+  const { slug } = params;
 
-  if (!articleId || typeof articleId !== 'string') {
-    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
+  if (!slug || typeof slug !== 'string') {
+    return NextResponse.json({ message: "Invalid slug", success: false, status: 400 }, { status: 400 });
   }
+
 
   try {
     const formData = await req.formData();
     const title = formData.get('title')
     const content = formData.get('content')
+    const id = formData.get('id')
     let imageUrl;
 
     if (formData.get("imageUrl")) {
@@ -73,7 +81,7 @@ export async function PUT(req: Request, {params}: { params: { articleId: string 
 
     const params = {
       TableName: 'Blog',
-      Key: { id: articleId },
+      Key: { id: id },
       UpdateExpression: 'set #title = :title, content = :content, imageUrl = if_not_exists(imageUrl, :imageUrl)',
       ExpressionAttributeNames: { '#title': 'title' },
       ExpressionAttributeValues: {
@@ -98,17 +106,18 @@ export async function PUT(req: Request, {params}: { params: { articleId: string 
 }
 
 // DELETE Request
-export async function DELETE(req: Request, {params}: { params: { articleId: string } }) {
-  const { articleId } = params;
+export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
+  const { slug } = params;
+  const {id} = await req.json()
 
-  if (!articleId || typeof articleId !== 'string') {
-    return NextResponse.json({ message: "Invalid article id", success: false, status: 400 }, { status: 400 });
+  if (!slug || typeof slug !== 'string') {
+    return NextResponse.json({ message: "Invalid slug", success: false, status: 400 }, { status: 400 });
   }
 
   try {
     const params = {
       TableName: 'Blog',
-      Key: { id: articleId },
+      Key: { id: id },
     };
 
     const command = new DeleteCommand(params);

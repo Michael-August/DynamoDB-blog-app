@@ -43,7 +43,7 @@ const NavBar = () => {
                     <div className='hidden lg:block border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                         Eweres Blog
                     </div>
-                    {pathname === "/admin" && <div className='cursor-pointer' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
+                    {pathname === "/admin" && <div className='cursor-pointer hidden lg:block' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
                 <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
                     {isMobileMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}

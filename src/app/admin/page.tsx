@@ -44,11 +44,11 @@ const Page = () => {
     router.push(`/blog/${id}`)
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (slug: string, articleId: string) => {
     const deleteToastId = toast.info("Deleting...", { autoClose: false });
     try {
 
-      await axios.delete(`/apis/articles/${id}`);
+      await axios({method: "delete", url: `/apis/articles/${slug}`, data: {id: articleId}});
 
       toast.dismiss(deleteToastId);
 
@@ -65,8 +65,8 @@ const Page = () => {
     }
   };
 
-  const handleEdit = (id: string) => {
-    localStorage.setItem("articleId", id)
+  const handleEdit = (slug: string) => {
+    localStorage.setItem("slug", slug)
     router.push("/admin/create")
   }
 
@@ -87,8 +87,8 @@ const Page = () => {
               <div className="menu-options absolute top-0 right-0">
                 {openActions === index && 
                 <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
-                    <span onClick={() => handleDelete(article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
-                    <span onClick={() => handleEdit(article.id)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
+                    <span onClick={() => handleDelete(article.slug, article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
+                    <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
                 </div>}
               </div>
             }

@@ -6,12 +6,12 @@ import Image from 'next/image';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
 
-const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: string; content: string; createdAt: any } }) => {
+const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: string; content: string; slug: string; createdAt: any } }) => {
     const router = useRouter()
 
     const handleViewDetails = () => {
         // if (!blog) return;
-        router.push(`/blog/${blog?.id}`)
+        router.push(`/blog/${blog?.slug}`)
     }
 
     return (

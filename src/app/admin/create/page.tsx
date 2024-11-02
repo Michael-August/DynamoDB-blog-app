@@ -16,7 +16,7 @@ const Page = () => {
 
     const router = useRouter()
     const [article, setArticle] = useState<any>(null);
-    let articleId: string = "";
+    const [slug, setSlug] = useState('');
 
     const {
         register,
@@ -49,9 +49,10 @@ const Page = () => {
 
         formData.append('title', data.title);
         formData.append('content', data.content);
+        formData.append('id', article.id);
 
         try {
-            const endpoint = article ? `/apis/articles/${articleId}` : '/apis/articles';
+            const endpoint = article ? `/apis/articles/${slug}` : '/apis/articles';
             const method = article ? 'put' : 'post';
 
             const response = await axios({ method, url: endpoint, data: formData });
@@ -64,9 +65,10 @@ const Page = () => {
     };
 
     const fetchData = async () => {
-        articleId = localStorage.getItem("articleId") as string
+        const slugFromStorage = localStorage.getItem("slug") as string;
+        setSlug(slugFromStorage)
         try {
-            const response = await axios.get(`/apis/articles/${articleId}`);
+            const response = await axios.get(`/apis/articles/${slugFromStorage}`);
             const fetchedArticle = response.data?.article;
             setArticle(response.data?.article);
 
@@ -87,7 +89,7 @@ const Page = () => {
 
     useEffect(() => {
         fetchData();
-    }, [articleId])
+    }, [slug])
     
     return (
         <div className='form container mx-auto lg:px-24'>
@@ -120,7 +122,7 @@ const Page = () => {
                         
                     </div>
 
-                    {!articleId ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
+                    {!slug ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
                     : <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>}
                 </form>
             </div>
