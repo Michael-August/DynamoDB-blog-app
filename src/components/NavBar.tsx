@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai'
 
@@ -14,6 +14,7 @@ const NavBar = () => {
     }
 
     const pathname = usePathname();
+    const router = useRouter()
     
     return (
         <div className='relative '>
@@ -37,12 +38,12 @@ const NavBar = () => {
                             <Link href={"/blog"}>Contact</Link>
                         }
                     </li>
-                    {/* <li>
-                        <Link href={"/blog"}>Blog</Link>
-                    </li> */}
                 </ul>
-                <div className='hidden lg:block border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
-                    Eweres Blog
+                <div className='flex items-center gap-4'>
+                    <div className='hidden lg:block border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
+                        Eweres Blog
+                    </div>
+                    {pathname === "/admin" && <div className='cursor-pointer' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
                 <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
                     {isMobileMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
@@ -60,6 +61,7 @@ const NavBar = () => {
                         <Link href={"/admin/create"}>Create</Link> :
                         <Link href={"/blog"}>Contact</Link>
                     }
+                    {pathname === "/admin" && <div onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
             )}
         </div>

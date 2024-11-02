@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from "next";
 import 'react-toastify/dist/ReactToastify.css';
 
 import "./globals.css"

@@ -8,6 +8,19 @@ import { UploadApiResponse } from "cloudinary";
 
 export const runtime = 'nodejs';
 
+function generateSlug(title: string, id: string) {
+  // Replace spaces with hyphens and convert to lowercase
+  const slugTitle = title.replace(/\s+/g, '-').toLowerCase();
+  
+  // Extract the first 6 characters of the ID
+  const slugId = id.toString().slice(0, 6);
+  
+  // Concatenate the title and ID to form the slug
+  const slug = `${slugTitle}-${slugId}`;
+  
+  return slug;
+}
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -39,6 +52,8 @@ export async function POST(req: Request) {
     const id = uuidv4();
 
     const imageUrl = result.secure_url
+    const slug = generateSlug(title as string, id)
+    console.log(slug)
 
     const params = {
       TableName: 'Blog',
@@ -47,6 +62,7 @@ export async function POST(req: Request) {
         title,
         content,
         imageUrl,
+        slug,
         createdAt: new Date().toISOString(),
       },
     };
