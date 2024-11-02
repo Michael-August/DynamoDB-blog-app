@@ -30,6 +30,9 @@ const NavBar = () => {
                         <Link href={"/about"}>About</Link>
                     </li>
                     <li>
+                        <Link href={"/gallery"}>Gallery</Link>
+                    </li>
+                    <li>
                         <Link href={"/blog"}>Blog</Link>
                     </li>
                     <li>
@@ -53,6 +56,12 @@ const NavBar = () => {
                 <div className="for-mobile lg:hidden fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-4">
                     <Link href="/" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Home
+                    </Link>
+                    <Link href="/about" onClick={toggleMobileMenu} className="text-sm font-medium">
+                        About
+                    </Link>
+                    <Link href="/Gallery" onClick={toggleMobileMenu} className="text-sm font-medium">
+                        Gallery
                     </Link>
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
