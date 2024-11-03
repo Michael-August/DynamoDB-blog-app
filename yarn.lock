@@ -3900,6 +3900,11 @@ react-markdown@^9.0.1:
     unist-util-visit "^5.0.0"
     vfile "^6.0.0"
 
+react-responsive-masonry@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/react-responsive-masonry/-/react-responsive-masonry-2.4.1.tgz#0601089a463efb276624a442216862ff8ca4fce8"
+  integrity sha512-IK7SfU3hB2ZoyYNkRan4jo0gDUdUj1+X1n8INZux1otX1OtDEvL5JRolLlCXOEwVf9wmwJiOLc140UzBpNi9wA==
+
 react-simplemde-editor@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/react-simplemde-editor/-/react-simplemde-editor-5.2.0.tgz#7a4c8b97e4989cb129b45ba140145d71bdc0684e"
