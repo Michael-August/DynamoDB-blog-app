@@ -11,6 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.675.0",
     "@aws-sdk/lib-dynamodb": "^3.678.0",
+    "@types/react-responsive-masonry": "^2.1.3",
     "axios": "^1.7.7",
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",

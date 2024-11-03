@@ -15,17 +15,22 @@ export default function MainRootLayout({ children,
 }>) {
   return (
     <html lang="en">
-        <body className="container mx-auto bg-[#f7fbff]">
-            <ToastContainer
-                position="top-center"
-                closeButton={true}
-            />
-            <NavBar />
-            <div className="mt-20 px-2 md:px-4">
-                {children}
-            </div>
-            <Footer />
-        </body>
+      <body className="container mx-auto bg-[#f7fbff]">
+        <ToastContainer
+            position="top-center"
+            closeButton={true}
+        />
+        <NavBar />
+        <div className="flex mt-20 px-2 md:px-4">
+          <div className="flex-grow">
+            {children}
+          </div>
+          <div>
+            
+          </div>
+        </div>
+        <Footer />
+      </body>
     </html>
   );
 }
