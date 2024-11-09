@@ -36,7 +36,7 @@ const NavBar = () => {
                         <Link href={"/blog"}>Blog</Link>
                     </li>
                     <li>
-                        {pathname === "/admin" ?
+                        {pathname === "/admin/" ?
                             <Link href={"/admin/create"}>Create</Link> :
                             <Link href={"/blog"}>Contact</Link>
                         }
@@ -66,11 +66,11 @@ const NavBar = () => {
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
                     </Link>
-                    {pathname === "/admin" ?
-                        <Link href={"/admin/create"}>Create</Link> :
-                        <Link href={"/blog"}>Contact</Link>
+                    {pathname === "/admin/" ?
+                        <Link onClick={toggleMobileMenu} href={"/admin/create"}>Create</Link> :
+                        <Link onClick={toggleMobileMenu} href={"/blog"}>Contact</Link>
                     }
-                    {pathname === "/admin" && <div onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
+                    {pathname === "/admin/" && <div onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
             )}
         </div>

@@ -88,7 +88,10 @@ const Page = () => {
     }, [router]);
 
     useEffect(() => {
-        fetchData();
+        if (slug) {
+
+            fetchData();
+        }
     }, [slug])
     
     return (
