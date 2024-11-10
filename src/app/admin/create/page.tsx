@@ -18,6 +18,8 @@ const Page = () => {
     const [article, setArticle] = useState<any>(null);
     const [slug, setSlug] = useState('');
 
+    const [loading, setLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -39,36 +41,39 @@ const Page = () => {
     }
 
     const onSubmit = async (data: any) => {
+        setLoading(true)
         const formData = new FormData();
 
         if (data.image && data.image[0]) {
             formData.append('image', data.image[0]);
         } else if (article?.imageUrl) {
             formData.append('imageUrl', article.imageUrl);
+            formData.append('id', article.id);
         }
 
         formData.append('title', data.title);
         formData.append('content', data.content);
-        formData.append('id', article.id);
 
         try {
-            const endpoint = article ? `/apis/articles/${slug}` : '/apis/articles';
-            const method = article ? 'put' : 'post';
+            const endpoint = slug ? `/apis/articles/${slug}` : '/apis/articles';
+            const method = slug ? 'put' : 'post';
 
             const response = await axios({ method, url: endpoint, data: formData });
             toast.success(`${response.data?.message}`)
             router.push("/admin")
+            localStorage.removeItem("slug")
         } catch (error: any) {
             toast.error(`${error?.message}`)
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     };
 
-    const fetchData = async () => {
-        const slugFromStorage = localStorage.getItem("slug") as string;
-        setSlug(slugFromStorage)
+    const fetchData = async (slug: string) => {
+        
         try {
-            const response = await axios.get(`/apis/articles/${slugFromStorage}`);
+            const response = await axios.get(`/apis/articles/${slug}`);
             const fetchedArticle = response.data?.article;
             setArticle(response.data?.article);
 
@@ -88,9 +93,11 @@ const Page = () => {
     }, [router]);
 
     useEffect(() => {
-        if (slug) {
+        const slugFromStorage = localStorage.getItem("slug") as string;
+        setSlug(slugFromStorage)
+        if (slugFromStorage) {
 
-            fetchData();
+            fetchData(slug);
         }
     }, [slug])
     
@@ -125,8 +132,10 @@ const Page = () => {
                         
                     </div>
 
-                    {!slug ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
-                    : <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>}
+                    {
+                        !slug ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
+                            : <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>
+                    }
                 </form>
             </div>
         </div>
