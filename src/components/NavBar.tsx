@@ -29,9 +29,9 @@ const NavBar = () => {
                     <li>
                         <Link href={"/about"}>About</Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link href={"/gallery"}>Gallery</Link>
-                    </li>
+                    </li> */}
                     <li>
                         <Link href={"/blog"}>Blog</Link>
                     </li>
@@ -60,9 +60,9 @@ const NavBar = () => {
                     <Link href="/about" onClick={toggleMobileMenu} className="text-sm font-medium">
                         About
                     </Link>
-                    <Link href="/Gallery" onClick={toggleMobileMenu} className="text-sm font-medium">
+                    {/* <Link href="/Gallery" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Gallery
-                    </Link>
+                    </Link> */}
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
                     </Link>

@@ -8,6 +8,7 @@ import banner from "@/public/images/main-image.jpg"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
@@ -47,7 +48,9 @@ export default function Home() {
         </div>
 
         {loading ?
-          <p>Loading...</p> :
+          <div className="mx-auto flex h-64 w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-black" />
+          </div> :
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
               {articles.map((article: any) => (
                   <BlogCard blog={article} key={article.id} />

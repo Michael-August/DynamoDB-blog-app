@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 import ReactMarkdown from 'react-markdown';
+import { Loader2 } from 'lucide-react';
 
 const Page = ({params}: { params: { slug: string } }) => {
 
@@ -34,7 +35,9 @@ const Page = ({params}: { params: { slug: string } }) => {
     return (
         <>
             {loading ? 
-                <p>Loading...</p> :
+                <div className="mx-auto flex h-64 w-full items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-black" />
+                </div> :
 
                 <div className="">
                     <div>
@@ -73,7 +76,7 @@ const Page = ({params}: { params: { slug: string } }) => {
 
                     {/* Content section */}
                     <div className="my-8">
-                        <ReactMarkdown>{blog?.content}</ReactMarkdown>
+                        <ReactMarkdown skipHtml={false}>{blog?.content}</ReactMarkdown>
                     </div>
                 </div>
             }
