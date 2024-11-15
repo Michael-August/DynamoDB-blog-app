@@ -15,7 +15,6 @@ import DOMPurify from "dompurify";
 import ReactMarkdown from 'react-markdown';
 import { Loader2 } from 'lucide-react';
 import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
-import { AiFillFacebook, AiOutlineLinkedin, AiOutlineTwitter } from 'react-icons/ai';
 
 const Page = ({params}: { params: { slug: string } }) => {
 
