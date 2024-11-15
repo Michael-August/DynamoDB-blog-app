@@ -51,7 +51,7 @@ export default function Home() {
           <div className="mx-auto flex h-64 w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-black" />
           </div> :
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               {articles.map((article: any) => (
                   <BlogCard blog={article} key={article.id} />
               ))}
