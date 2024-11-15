@@ -18,7 +18,7 @@ export default function Home() {
     const fetchData = async () => {
         try {
             const response = await axios.get('/apis/public');
-            setArticles(response.data?.posts.slice(0, 8).reverse());
+            setArticles(response.data?.posts.slice(0, 8));
         } catch (error: any) {
           toast.error(`${error.message}`)
         } finally {
@@ -41,7 +41,7 @@ export default function Home() {
           </span>
         </div>
       </div>
-      <div className="articles bg-white px-4 py-10 md:py-20 mb-10">
+      <div className="articles px-4 py-10 md:py-20 mb-10">
         <div className="top flex items-center gap-4 text-black mb-10">
           <AiFillRead className="font-semibold text-3xl text-slate-800" />
           <span className="font-semibold text-3xl">Latest Posts</span>

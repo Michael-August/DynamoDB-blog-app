@@ -98,66 +98,66 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <div className='mb-5'>
       {loading ?
         <div className="mx-auto flex h-64 w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-black" />
         </div> : 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4'>
         {articles.map((article: any, index:number) => (
-          <div key={article.id} onClick={() => {if(openActions === index) setOpenActions(null)}} className="relative p-3 border border-[#e3e3e3] rounded-lg mb-10">
-            <div className="menu absolute cursor-pointer top-2 right-2">
-              <FaEllipsisV onClick={() => toggleActionsCard(index)} className='text-gray-600' />
-            </div>
-            {
-              <div className="menu-options absolute top-0 right-0">
-                {openActions === index && 
-                <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
-                    <span onClick={() => handleDelete(article.slug, article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
-                    <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
-                    {article.status === "published" ?
-                      <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
-                      :
-                      <span onClick={() => handleStatusUpate(article.slug, "published", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
-
-                    }
-                </div>}
+          <div key={article.id} onClick={() => { if (openActions === index) setOpenActions(null) }} className="max-w-xs w-full group/card">
+            <div
+              style={{ backgroundImage: `url(${article.imageUrl})`, backgroundSize: 'cover' }}
+              className={`
+                cursor-pointer overflow-hidden relative card h-96 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4
+              `}
+            >
+              <div className="menu absolute cursor-pointer top-2 right-2 z-50">
+                <FaEllipsisV onClick={() => toggleActionsCard(index)} className='text-white' />
               </div>
-            }
-            <div className='w-fit -mx-3 -mt-3'>
-                <Image className='w-[inherit] h-[inherit]  rounded-lg' src={article?.imageUrl || blogImage} width={300} height={200} alt="blog img" />
-            </div>
+              {
+                <div className="menu-options absolute top-0 right-0 z-50">
+                  {openActions === index && 
+                  <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
+                      <span onClick={() => handleDelete(article.slug, article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
+                      <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
+                      {article.status === "published" ?
+                        <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
+                        :
+                        <span onClick={() => handleStatusUpate(article.slug, "published", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
 
-            {/* category */}
-            {/* <div className="my-4">
-                <span className="text-[#4b6bfb] bg-[#f2f4fb] rounded-full px-2 py-1 text-center text-sm capitalize">{ blog?.category.toLowerCase() || 'General'}</span>
-            </div> */}
+                      }
+                  </div>}
+                </div>
+              }
 
-            {/* title */}
-            <div>
-                <p className="text-xl font-semibold mt-5">{article?.title || "Test title here"}</p>
-            </div>
-
-            {/* author details */}
-            <div className="flex flex-col gap-4 mt-6 mb-4">
-              <div className="flex justify-start gap-2">
-                  {/* author img */}
-                  <div>
-                      <Image src={authorImage} width={32} height={32} className="rounded-full w-[30px] h-[30px]" alt="author Image" />
-                  </div>
-                  <div>
-                      <p>Ewere Diagboya</p>
+              <div className="absolute w-full h-full top-0 left-0 transition duration-300 bg-black opacity-80"></div>
+              <div className="flex flex-row items-center space-x-4 z-10">
+                  <Image
+                      height="100"
+                      width="100"
+                      alt="Avatar"
+                      src={authorImage}
+                      className="h-10 w-10 rounded-full border-2 object-cover"
+                  />
+                  <div className="flex flex-col">
+                      <p className="font-normal text-base text-gray-50 relative z-10">
+                      Ewere Diagboya
+                      </p>
+                      <p className="text-sm text-gray-400">{moment(article?.createdAt).format("Do MMMM YYYY")}</p>
                   </div>
               </div>
-
-              <div>
-                  {/* Date */}
-                  <p>
-                      { moment(article?.createdAt).format("Do MMMM YYYY")}
+              <div className="text content">
+                  <h1 className="font-bold text-xl md:text-2xl text-gray-50 relative z-10">
+                      {article.title}
+                  </h1>
+                  <p className="font-normal text-sm text-gray-50 relative z-10 my-4">
+                      Card with Author avatar, complete name and time to read - most
+                      suitable for blogs.
                   </p>
               </div>
               </div>
-            </div>
+          </div>
         ))}
           </div>
       }
