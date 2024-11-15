@@ -21,11 +21,11 @@ export default function MainRootLayout({ children,
             closeButton={true}
         />
         <NavBar />
-        <div className="flex mt-20 px-2 md:px-4">
-          <div className="flex-grow">
+        <div className="flex mt-20 px-2 md:px-4 gap-5">
+          <div className="flex-[8]">
             {children}
           </div>
-          <div>
+          <div className='flex-[2]'>
             
           </div>
         </div>
