@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 
     const imageUrl = result.secure_url
     const slug = generateSlug(title as string, id)
-    console.log(slug)
+    const status = "unpublished"
 
     const params = {
       TableName: 'Blog',
@@ -62,6 +62,7 @@ export async function POST(req: Request) {
         title,
         content,
         imageUrl,
+        status,
         slug,
         createdAt: new Date().toISOString(),
       },

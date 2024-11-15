@@ -8,27 +8,60 @@ import Pagination from '@/components/Pagination'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { Loader2 } from 'lucide-react'
+import { FaSearch } from 'react-icons/fa'
+import fetchData from '../../../utils/fetchData'
 
 const Page = () => {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [searchTerm, setSearchTerm] = useState("")
+
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+    const debounceDelay = 1000;
+
+    const fetchData = async (searchValue?: string) => {
+        try {
+            const response = await axios.get(`/apis/public?search=${searchValue ? searchValue : ''}`);
+            setArticles(response.data?.posts);
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('/apis/articles');
-                setArticles(response.data?.posts);
-            } catch (error: any) {
-                toast.error(error.message)
-            } finally {
-                setLoading(false);
-            }
-        };
+        const debounceTimer = setTimeout(() => {
+        setDebouncedSearchTerm(searchTerm);
+        }, debounceDelay);
+
+        return () => clearTimeout(debounceTimer);
+    }, [searchTerm, debounceDelay]);
+
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            const search = async () => {
+                console.log("search")
+                fetchData(debouncedSearchTerm)
+            };
+            search();
+        } else {
+            fetchData()
+        }
+    }, [debouncedSearchTerm]);
+
+    useEffect(() => {
 
         fetchData();
     }, [])
     return (
         <div>
+            <div className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 border border-gray-400'>
+                <FaSearch />
+                <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
+            </div>
             {/* <div className='w-full'>
                 <Image className='w-[inherit]' width={500} height={300} src={banner} alt={'Banner image'} />
             </div> */}

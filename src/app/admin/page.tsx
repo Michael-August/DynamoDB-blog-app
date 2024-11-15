@@ -10,6 +10,7 @@ import blogImage from "@/public/images/blogBodyImg.jpg"
 import authorImage from "@/public/images/author-image.jpg"
 import moment from 'moment';
 import { FaEllipsisV } from 'react-icons/fa';
+import { Loader2 } from 'lucide-react';
 
 const Page = () => {
   const [articles, setArticles] = useState([]);
@@ -65,6 +66,28 @@ const Page = () => {
     }
   };
 
+  const handleStatusUpate = async (slug: string, status: "published" | "unpublished", articleId: string) => {
+
+    const updateToastId = toast.info("Updating...", { autoClose: false });
+    try {
+
+      await axios({method: "patch", url: `/apis/articles/${slug}`, data: {status, id: articleId}});
+
+      toast.dismiss(updateToastId);
+
+      toast.success("Updated successfully!", {
+        autoClose: 2000,
+      });
+      fetchData()
+    } catch (error: any) {
+      toast.dismiss(updateToastId);
+      toast.error("Error updating resource: " + error.message, {
+        autoClose: 2000,
+      });
+      console.error("Error updating resource:", error.message);
+    }
+  }
+
   const handleEdit = (slug: string) => {
     localStorage.setItem("slug", slug)
     router.push("/admin/create")
@@ -76,7 +99,10 @@ const Page = () => {
 
   return (
     <div>
-      {loading ? <p>Loading...</p> : 
+      {loading ?
+        <div className="mx-auto flex h-64 w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-black" />
+        </div> : 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4'>
         {articles.map((article: any, index:number) => (
           <div key={article.id} onClick={() => {if(openActions === index) setOpenActions(null)}} className="relative p-3 border border-[#e3e3e3] rounded-lg mb-10">
@@ -89,11 +115,17 @@ const Page = () => {
                 <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
                     <span onClick={() => handleDelete(article.slug, article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
                     <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
+                    {article.status === "published" ?
+                      <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
+                      :
+                      <span onClick={() => handleStatusUpate(article.slug, "published", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
+
+                    }
                 </div>}
               </div>
             }
             <div className='w-fit -mx-3 -mt-3'>
-                <Image className='w-[inherit] rounded-lg' src={article?.imageUrl || blogImage} width={300} height={200} alt="blog img" />
+                <Image className='w-[inherit] h-[inherit]  rounded-lg' src={article?.imageUrl || blogImage} width={300} height={200} alt="blog img" />
             </div>
 
             {/* category */}

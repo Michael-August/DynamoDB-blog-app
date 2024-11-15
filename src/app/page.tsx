@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await axios.get('/apis/articles');
+            const response = await axios.get('/apis/public');
             setArticles(response.data?.posts.slice(0, 8).reverse());
         } catch (error: any) {
           toast.error(`${error.message}`)

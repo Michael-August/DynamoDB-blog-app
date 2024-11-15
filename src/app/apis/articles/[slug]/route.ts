@@ -105,6 +105,62 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
   }
 }
 
+export async function PATCH(req: NextRequest, { params }: { params: { slug: string } }) {
+  const { slug } = params;
+
+  if (!slug || typeof slug !== 'string') {
+    return NextResponse.json({ message: "Invalid slug", success: false, status: 400 }, { status: 400 });
+  }
+
+  try {
+    // Parse JSON body
+    const body = await req.json();
+    const { status, id } = body;
+
+    // Validate the status field
+    if (!status || typeof status !== 'string') {
+      return NextResponse.json({ message: "Invalid status", success: false, status: 400 }, { status: 400 });
+    }
+
+    // Prepare parameters for the UpdateCommand
+    const params = {
+      TableName: 'Blog',
+      Key: { id: id },
+      UpdateExpression: 'set #status = :status',
+      ExpressionAttributeNames: { '#status': 'status' },
+      ExpressionAttributeValues: {
+        ':status': status,
+      },
+      ReturnValues: ReturnValue.ALL_NEW,
+    };
+
+    const command = new UpdateCommand(params);
+    const data = await dynamoDb.send(command);
+
+    if (!data.Attributes) {
+      return NextResponse.json({
+        message: "Article not found",
+        success: false,
+        status: 404,
+      }, { status: 404 });
+    }
+
+    // Return the updated article
+    return NextResponse.json({
+      updatedArticle: data.Attributes,
+      message: "Status updated successfully",
+      success: true,
+      status: 200,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+    } else {
+      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+    }
+  }
+}
+
 // DELETE Request
 export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
   const { slug } = params;
