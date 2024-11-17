@@ -80,7 +80,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
 
                     {/* author details */}
-                    <div className="flex justify-start gap-4 md:gap-8 lg:gap-8 mt-6 mb-4">
+                    <div className="flex flex-wrap justify-start gap-4 md:gap-8 lg:gap-8 mt-6 mb-4">
                         <div className="flex justify-start gap-2">
                             {/* author img */}
                             <div>
@@ -123,13 +123,13 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
 
                     <div className="footer my-8">
-                        <div className="profile-share flex items-center justify-between">
+                        <div className="profile-share flex flex-wrap items-center justify-between gap-4">
                             <div className="profile flex flex-col gap-2">
                                 <div>
                                     <Image width={200} height={100} src={image2} className="rounded-full w-20" alt="author Image" />
                                 </div>
-                                <span className='font-semibold text-xl'>Written by Ewere Diagboya</span>
-                                <span className='text-sm'>First AWS Hero in Africa, DevOps Enginner</span>
+                                <span className='font-semibold text-base md:text-xl'>Written by Ewere Diagboya</span>
+                                <span className='text-xs md:text-sm'>First AWS Hero in Africa, DevOps Enginner</span>
                             </div>
                             <div className="socials ">
                                 <SocialMediaSharing url={`${window.location.origin}/blog/${blog?.slug}`} title={blog?.title} />
