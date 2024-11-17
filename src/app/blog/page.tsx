@@ -58,7 +58,7 @@ const Page = () => {
     }, [])
     return (
         <div>
-            <div className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 border border-gray-400'>
+            <div className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'>
                 <FaSearch />
                 <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
             </div>

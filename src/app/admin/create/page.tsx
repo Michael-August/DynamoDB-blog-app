@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
+import TagInput from '@/components/TagInput';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
@@ -19,6 +20,8 @@ const Page = () => {
     const [slug, setSlug] = useState('');
 
     const [loading, setLoading] = useState(false);
+
+    const [tags, setTags] = useState<string[]>([]);
 
     const {
         register,
@@ -53,6 +56,7 @@ const Page = () => {
 
         formData.append('title', data.title);
         formData.append('content', data.content);
+        formData.append('tags', JSON.stringify(tags));
 
         try {
             const endpoint = slug ? `/apis/articles/${slug}` : '/apis/articles';
@@ -117,6 +121,10 @@ const Page = () => {
                         {imagePreview && (
                             <Image width={192} height={192} src={imagePreview} alt="Image Preview" className="w-48 h-48 object-cover" />
                         )}
+                    </div>
+                    <div className='form-group flex flex-col gap-4'>
+                        <label>Tags</label>
+                        <TagInput tags={tags} setTags={setTags} />
                     </div>
                     <div className="form-group flex flex-col gap-4">
                         <label>Title</label>

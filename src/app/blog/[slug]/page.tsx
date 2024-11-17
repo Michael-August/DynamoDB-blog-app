@@ -15,11 +15,17 @@ import DOMPurify from "dompurify";
 import ReactMarkdown from 'react-markdown';
 import { Loader2 } from 'lucide-react';
 import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
+import ArticleTags from '@/components/ArticleTags';
+
+import image2 from "@/public/images/image-2.jpg"
+import BlogCard from '@/components/BlogCard';
 
 const Page = ({params}: { params: { slug: string } }) => {
 
     const [blog, setBlog] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+
+    const [similarArticles, setSimilarArticles] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,6 +41,22 @@ const Page = ({params}: { params: { slug: string } }) => {
 
         fetchData();
     }, [params.slug])
+
+    useEffect(() => {
+        const fetchSimilarBlogs = async () => {
+        const response = await fetch(
+            `/apis/similar?blogId=${blog?.id}&tags=${blog?.tags}`
+        );
+        const data = await response.json();
+        if (data.success) {
+            setSimilarArticles(data.blogs);
+        }
+        };
+
+        if (blog) {
+            fetchSimilarBlogs();
+        }
+    }, [blog]);
     
     return (
         <>
@@ -77,6 +99,10 @@ const Page = ({params}: { params: { slug: string } }) => {
                         </div>
                     </div>
 
+                    <div className='mt-6 mb-4'>
+                        <ArticleTags tags={blog?.tags} />
+                    </div>
+
                     {/* Blog Image */}
                     <div className='my-4 w-full h-[30rem]'>
                         <Image className='w-[inherit] h-[inherit] object-cover rounded-3xl' src={blog?.imageUrl || blogImg} width={100} height={100} alt="blog img" />
@@ -95,6 +121,29 @@ const Page = ({params}: { params: { slug: string } }) => {
                             skipHtml={false}
                             rehypePlugins={[rehypeRaw]}>{DOMPurify.sanitize(blog?.content)}</ReactMarkdown>
                     </div>
+
+                    <div className="footer my-8">
+                        <div className="profile-share flex items-center justify-between">
+                            <div className="profile flex flex-col gap-2">
+                                <div>
+                                    <Image width={200} height={100} src={image2} className="rounded-full w-20" alt="author Image" />
+                                </div>
+                                <span className='font-semibold text-xl'>Written by Ewere Diagboya</span>
+                                <span className='text-sm'>First AWS Hero in Africa, DevOps Enginner</span>
+                            </div>
+                            <div className="socials ">
+                                <SocialMediaSharing url={`${window.location.origin}/blog/${blog?.slug}`} title={blog?.title} />
+                            </div>
+                        </div>
+                        <hr className='my-8' />
+                        {
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+                                {similarArticles?.map((article: any) => (
+                                    <BlogCard blog={article} key={article.id} />
+                                ))}
+                            </div>
+                        }
+                    </div>
                 </div>
             }
         </>
@@ -103,17 +152,17 @@ const Page = ({params}: { params: { slug: string } }) => {
 
 const SocialMediaSharing = ({ url, title }: { url: string; title: string }) => {
   return (
-        <div className="social-sharing flex flex-col gap-3">
+        <div className="social-sharing flex flex-col gap-1">
             <h4>Share this post:</h4>
             <div className="social-buttons flex gap-1">
                 <FacebookShareButton url={url} hashtag={'#ewereblog'}>
-                    <FacebookIcon size={24} round />
+                    <FacebookIcon size={30} round />
                 </FacebookShareButton>
                 <TwitterShareButton url={url} title={title}>
-                    <TwitterIcon size={24} round />
+                    <TwitterIcon size={30} round />
                 </TwitterShareButton>
                 <LinkedinShareButton url={url}>
-                        <LinkedinIcon size={24} round />
+                        <LinkedinIcon size={30} round />
                 </LinkedinShareButton>
             </div>
         </div>

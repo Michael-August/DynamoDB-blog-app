@@ -18,7 +18,7 @@ const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: strin
     return (
         <>
             <div onClick={handleViewDetails} className="">
-                <Card title={blog?.title} imageUrl={blog?.imageUrl} date={moment(blog?.createdAt).format("Do MMMM YYYY")} />
+                <Card content={blog?.content} title={blog?.title} imageUrl={blog?.imageUrl} date={moment(blog?.createdAt).format("Do MMMM YYYY")} />
             </div>
         </>
     )

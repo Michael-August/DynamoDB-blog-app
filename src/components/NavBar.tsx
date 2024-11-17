@@ -22,16 +22,13 @@ const NavBar = () => {
                 <div className="logo text-base lg:text-xl font-semibold">
                     <Link href={"/"}>Ewere Diagboya</Link>
                 </div>
-                <ul className='hidden lg:flex lg:items-center lg:gap-5'>
+                {/* <ul className='hidden lg:flex lg:items-center lg:gap-5'>
                     <li>
                         <Link href={"/"}>Home</Link>
                     </li>
                     <li>
                         <Link href={"/about"}>About</Link>
                     </li>
-                    {/* <li>
-                        <Link href={"/gallery"}>Gallery</Link>
-                    </li> */}
                     <li>
                         <Link href={"/blog"}>Blog</Link>
                     </li>
@@ -41,18 +38,18 @@ const NavBar = () => {
                             <Link href={"/blog"}>Contact</Link>
                         }
                     </li>
-                </ul>
+                </ul> */}
                 <div className='flex items-center gap-4'>
-                    <div className='hidden lg:block border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
-                        Eweres Blog
-                    </div>
-                    {pathname === "/admin" && <div className='cursor-pointer hidden lg:block' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
+                    <Link href={"/about"} className='border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
+                        About
+                    </Link>
+                    {(pathname === "/admin/" || pathname === "/admin/create/") && <div className='cursor-pointer hidden lg:block' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
-                <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
+                {/* <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
                     {isMobileMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
-                </div>
+                </div> */}
             </nav>
-            {isMobileMenuOpen && (
+            {/* {isMobileMenuOpen && (
                 <div className="for-mobile lg:hidden fixed inset-0 bg-white z-40 flex flex-col items-center justify-center space-y-4">
                     <Link href="/" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Home
@@ -60,9 +57,6 @@ const NavBar = () => {
                     <Link href="/about" onClick={toggleMobileMenu} className="text-sm font-medium">
                         About
                     </Link>
-                    {/* <Link href="/Gallery" onClick={toggleMobileMenu} className="text-sm font-medium">
-                        Gallery
-                    </Link> */}
                     <Link href="/blog" onClick={toggleMobileMenu} className="text-sm font-medium">
                         Blog
                     </Link>
@@ -72,7 +66,7 @@ const NavBar = () => {
                     }
                     {pathname === "/admin/" && <div onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
                 </div>
-            )}
+            )} */}
         </div>
     )
 }

@@ -18,7 +18,7 @@ export default function Home() {
     const fetchData = async () => {
         try {
             const response = await axios.get('/apis/public');
-            setArticles(response.data?.posts.slice(0, 8));
+            setArticles(response.data?.posts);
         } catch (error: any) {
           toast.error(`${error.message}`)
         } finally {
@@ -30,7 +30,7 @@ export default function Home() {
   }, [])
   return (
     <div>
-      <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
+      {/* <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
         <div> 
           <Image src={ banner } className="w-[inherit] h-[inherit]" alt={""} />
         </div>
@@ -40,8 +40,8 @@ export default function Home() {
             started his career in tech in 2003. He started as a Software Developer in PHP, Visual Basic, HTML, and CSS. He later switched to DevOps and Cloud in 2015. He is the first AWS Community Hero in Africa and the author of two books: Infrastructure Monitoring with Amazon CloudWatch and Techtionary which are available on Amazon.com. He is an AWS Community leader in Nigeria. He loves to talk about Cloud Computing, DevOps, and innovations around efficient software delivery technologies and processes. He has also been a two-time judge for the Cybersafe Foundation Cybergirls Fellowship and PipeOps Hackathon.
           </span>
         </div>
-      </div>
-      <div className="articles px-4 py-10 md:py-20 mb-10">
+      </div> */}
+      <div className="articles px-4 py-10 mb-10">
         <div className="top flex items-center gap-4 text-black mb-10">
           <AiFillRead className="font-semibold text-3xl text-slate-800" />
           <span className="font-semibold text-3xl">Latest Posts</span>

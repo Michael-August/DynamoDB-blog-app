@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import authorImage from "@/public/images/author-image.jpg"
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
-export function Card({ title, imageUrl, date }: { title: string; imageUrl: string; date: any }) {
+import DOMPurify from "dompurify";
+
+export function Card({ title, imageUrl, date, content }: { title: string; imageUrl: string; date: any, content: string }) {
     console.log(imageUrl)
   return (
     <div className="max-w-xs w-full group/card">
@@ -34,8 +38,19 @@ export function Card({ title, imageUrl, date }: { title: string; imageUrl: strin
                     {title}
                 </h1>
                 <p className="font-normal text-sm text-gray-50 relative z-10 my-4">
-                    Card with Author avatar, complete name and time to read - most
-                    suitable for blogs.
+                   <ReactMarkdown
+                        components={{
+                            a: ({ href, children }) => (
+                                <a href={href} style={{ color: '#1e90ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">
+                                {children}
+                                </a>
+                            ),
+                        }}
+                        skipHtml={false}
+                          rehypePlugins={[rehypeRaw]}
+                    >
+                          {DOMPurify.sanitize(content.slice(0, 80) + '...')}
+                    </ReactMarkdown>
                 </p>
             </div>
         </div>
