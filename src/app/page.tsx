@@ -41,7 +41,7 @@ export default function Home() {
           </span>
         </div>
       </div> */}
-      <div className="articles px-4 py-10 mb-10">
+      <div className="articles px-4 py-5 mb-10">
         <div className="top flex items-center gap-4 text-black mb-10">
           <AiFillRead className="font-semibold text-3xl text-slate-800" />
           <span className="font-semibold text-3xl">Latest Posts</span>

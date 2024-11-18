@@ -1,3 +1,4 @@
+import Breadcrumb from '@/components/Breadcrumb';
 import Footer from '@/components/Footer';
 import NavBar from '@/components/NavBar';
 import { Metadata } from 'next';
@@ -21,12 +22,15 @@ export default function MainRootLayout({ children,
             closeButton={true}
         />
         <NavBar />
-        <div className="flex flex-col-reverse md:flex-row mt-20 px-2 md:px-4 md:gap-5">
-          <div className="md:flex-[8]">
-            {children}
-          </div>
-          <div className='md:flex-[2]'>
-            
+        <div className='flex flex-col mt-20 px-2 md:px-4 md:gap-5'>
+          <Breadcrumb />
+          <div className="flex flex-col-reverse md:flex-row">
+            <div className="md:flex-[8]">
+              {children}
+            </div>
+            <div className='md:flex-[2]'>
+              
+            </div>
           </div>
         </div>
         <Footer />
