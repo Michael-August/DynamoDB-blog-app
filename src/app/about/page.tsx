@@ -87,26 +87,30 @@ const Page = () => {
                     <span className="font-semibold text-3xl">Books</span>
                 </div>
                 <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
-                    <figure>
-                        <Image src={book1} width={0} height={0} alt={''} />
-                        <figcaption>Infrastructure Monitoring with Amazon CloudWatch</figcaption>
-                        {/* <span className="text-sm text-white">Effectively monitor your AWS infrastructure to optimize resource allocation, detect anomalies, and set automated actions</span> */}
-                        <button className="purchase-button">
-                            <Link href={"http://packt.live/cloudwatch"} target="_blank">
-                                Purchase Now
-                            </Link>
-                        </button>
-                    </figure>
-                    <figure>
-                        <Image className="h-96" src={book2} width={0} height={0} alt={''} />
-                        <figcaption>Techtionary</figcaption>
-                        {/* <span className="text-sm text-white"> A simpler explanation of common terms used in Cloud Computing...</span> */}
-                        <button className="purchase-button">
-                            <Link href={"http://selar.co/clug"} target="_blank">
-                                Purchase Now
-                            </Link>
-                        </button>
-                    </figure>
+                    <Link href={"http://packt.live/cloudwatch"} target="_blank">
+                        <figure>
+                            <Image src={book1} width={0} height={0} alt={''} />
+                            <figcaption>Infrastructure Monitoring with Amazon CloudWatch</figcaption>
+                            {/* <span className="text-sm text-white">Effectively monitor your AWS infrastructure to optimize resource allocation, detect anomalies, and set automated actions</span> */}
+                            <button className="purchase-button">
+                                <Link href={"http://packt.live/cloudwatch"} target="_blank">
+                                    Purchase Now
+                                </Link>
+                            </button>
+                        </figure>
+                    </Link>
+                    <Link href={"http://selar.co/clug"} target="_blank">
+                        <figure>
+                            <Image className="h-96" src={book2} width={0} height={0} alt={''} />
+                            <figcaption>Techtionary</figcaption>
+                            {/* <span className="text-sm text-white"> A simpler explanation of common terms used in Cloud Computing...</span> */}
+                            <button className="purchase-button">
+                                <Link href={"http://selar.co/clug"} target="_blank">
+                                    Purchase Now
+                                </Link>
+                            </button>
+                        </figure>
+                    </Link>
                 </div>
             </div>
         </div>

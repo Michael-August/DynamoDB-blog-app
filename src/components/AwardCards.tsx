@@ -21,6 +21,7 @@ export const AwardCards = ({
         <Link
           href={item?.link}
           key={item?.link}
+          target="_blank"
           className="relative group  block p-2 h-full w-full transition-all hover:scale-110"
         >
           <Card>
