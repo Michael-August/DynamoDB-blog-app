@@ -43,7 +43,6 @@ const Page = () => {
     useEffect(() => {
         if (debouncedSearchTerm) {
             const search = async () => {
-                console.log("search")
                 fetchData(debouncedSearchTerm)
             };
             search();

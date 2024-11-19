@@ -11,6 +11,10 @@ import { GrGallery } from "react-icons/gr"
 import image1 from "@/public/images/image-1.jpg"
 import image2 from "@/public/images/image-2.jpg"
 
+import book1 from "@/public/images/book1.jpg"
+import book2 from "@/public/images/book2.jpeg"
+import Link from "next/link"
+
 const Awards = [
     {
         title: "HACKERNOON CONTRIBUTOR OF THE YEAR- INTERNET",
@@ -81,6 +85,28 @@ const Page = () => {
                 <div className="top flex items-center gap-4 text-black mb-5">
                     <FaBook className="font-semibold text-3xl text-slate-800" />
                     <span className="font-semibold text-3xl">Books</span>
+                </div>
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
+                    <figure>
+                        <Image src={book1} width={0} height={0} alt={''} />
+                        <figcaption>Infrastructure Monitoring with Amazon CloudWatch</figcaption>
+                        {/* <span className="text-sm text-white">Effectively monitor your AWS infrastructure to optimize resource allocation, detect anomalies, and set automated actions</span> */}
+                        <button className="purchase-button">
+                            <Link href={"http://packt.live/cloudwatch"} target="_blank">
+                                Purchase Now
+                            </Link>
+                        </button>
+                    </figure>
+                    <figure>
+                        <Image className="h-96" src={book2} width={0} height={0} alt={''} />
+                        <figcaption>Techtionary</figcaption>
+                        {/* <span className="text-sm text-white"> A simpler explanation of common terms used in Cloud Computing...</span> */}
+                        <button className="purchase-button">
+                            <Link href={"http://selar.co/clug"} target="_blank">
+                                Purchase Now
+                            </Link>
+                        </button>
+                    </figure>
                 </div>
             </div>
         </div>

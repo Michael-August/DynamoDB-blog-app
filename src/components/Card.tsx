@@ -8,7 +8,6 @@ import rehypeRaw from "rehype-raw";
 import DOMPurify from "dompurify";
 
 export function Card({ title, imageUrl, date, content }: { title: string; imageUrl: string; date: any, content: string }) {
-    console.log(imageUrl)
   return (
     <div className="max-w-xs w-full group/card">
         <div

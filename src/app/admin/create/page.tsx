@@ -68,7 +68,6 @@ const Page = () => {
             localStorage.removeItem("slug")
         } catch (error: any) {
             toast.error(`${error?.message}`)
-            console.error(error);
         } finally {
             setLoading(false)
         }

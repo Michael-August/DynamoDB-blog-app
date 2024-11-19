@@ -22,6 +22,7 @@
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "next": "14.2.15",
+    "nextjs-google-analytics": "^2.3.7",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.1",
