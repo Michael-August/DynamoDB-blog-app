@@ -30,7 +30,7 @@ const Page = ({params}: { params: { slug: string } }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/apis/articles/${blog?.title}`);
+                const response = await axios.get(`/apis/articles/${params.slug}`);
                 setBlog(response.data?.article);
             } catch (error: any) {
                 toast.error(error.message)
