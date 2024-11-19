@@ -35,7 +35,7 @@ const Breadcrumb = () => {
                 {item.label.slice(0, -7)}
               </Link>
             ) : (
-              <span style={activeStyle}>{item.label.slice(0, -7)}</span>
+              <span style={activeStyle}>{item.label !== "about" ? item.label.slice(0, -7) : item.label}</span>
             )}
           </li>
         ))}
