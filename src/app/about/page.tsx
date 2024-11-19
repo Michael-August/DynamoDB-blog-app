@@ -12,7 +12,7 @@ import image1 from "@/public/images/image-1.jpg"
 import image2 from "@/public/images/image-2.jpg"
 
 import book1 from "@/public/images/book1.jpg"
-import book2 from "@/public/images/book2.jpeg"
+import book2 from "@/public/images/book2.jpg"
 import Link from "next/link"
 
 const Awards = [

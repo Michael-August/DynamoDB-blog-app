@@ -24,14 +24,14 @@ export default function MainRootLayout({ children,
         {/* Google tag (gtag.js) */}
         <Script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=G-W7QZT1RWGW"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4182955591624539"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
 
       </head>
       <body className="container mx-auto bg-[#f7fbff]">
-        <GoogleAnalytics trackPageViews />
+        <GoogleAnalytics gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} trackPageViews />
         <ToastContainer
             position="top-center"
             closeButton={true}
