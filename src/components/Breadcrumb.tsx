@@ -32,10 +32,10 @@ const Breadcrumb = () => {
           <li key={index} style={breadcrumbItemStyle}>
             {index !== breadcrumbItems.length - 1 ? (
               <Link href={item.path} style={linkStyle}>
-                {item.label}
+                {item.label.slice(0, -7)}
               </Link>
             ) : (
-              <span style={activeStyle}>{item.label}</span>
+              <span style={activeStyle}>{item.label.slice(0, -7)}</span>
             )}
           </li>
         ))}
