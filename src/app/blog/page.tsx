@@ -81,7 +81,7 @@ const Page = () => {
                     </div>
                 }
 
-                <Pagination page={`1`} totalPages={10} />
+                {/* <Pagination page={`1`} totalPages={10} /> */}
             </div>
         </div>
     )

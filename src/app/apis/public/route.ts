@@ -7,7 +7,9 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   try {
     const search = req.nextUrl.searchParams.get('search');
-    const params = {
+    const lastEvaluatedKey = req.nextUrl.searchParams.get('lastKey');
+    
+    const params: any = {
       TableName: 'Blog',
       FilterExpression: '#status = :status',
       ExpressionAttributeNames: {
@@ -23,12 +25,25 @@ export async function GET(req: NextRequest) {
       params.ExpressionAttributeValues[':search'] = search;
     }
 
-    const command = new ScanCommand(params);
-    const data = await dynamoDb.send(command);
+    const paginatedParams = { ...params, Limit: 10 };
+    if (lastEvaluatedKey) {
+      paginatedParams.ExclusiveStartKey = JSON.parse(lastEvaluatedKey);
+    }
+
+    // Run the paginated query
+    const paginatedCommand = new ScanCommand(paginatedParams);
+    const paginatedData = await dynamoDb.send(paginatedCommand);
+
+    // Run a count query to get the total number of matching items
+    const countCommand = new ScanCommand(params);
+    const countData = await dynamoDb.send(countCommand);
 
     return NextResponse.json({
-      posts: data.Items,
-      message: 'Fetch successful',
+      posts: paginatedData.Items,
+      lastKey: paginatedData.LastEvaluatedKey ? JSON.stringify(paginatedData.LastEvaluatedKey) : null,
+      total: countData.ScannedCount,
+      limit: 10,
+      message: "Fetch successful",
       success: true,
       status: 200,
     }, { status: 200 });

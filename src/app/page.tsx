@@ -9,16 +9,29 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
+import Pagination from "@/components/Pagination";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [lastKey, setLastKey] = useState(null);
+
   useEffect(() => {
+    const queryParams = new URLSearchParams();
+
+    if (lastKey) {
+      queryParams.append('lastKey', lastKey);
+    }
     const fetchData = async () => {
         try {
-            const response = await axios.get('/apis/public');
-            setArticles(response.data?.posts);
+          const response = await axios.get(`/apis/public?${queryParams.toString()}`);
+          setArticles(response.data?.posts);
+          setLastKey(response.data?.lastKey);
+          setTotalPages(Math.ceil(response.data?.total / response.data?.limit))
         } catch (error: any) {
           toast.error(`${error.message}`)
         } finally {
@@ -27,7 +40,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [])
+  }, [currentPage])
   return (
     <div>
       {/* <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
@@ -58,6 +71,12 @@ export default function Home() {
           </div>
         }
       </div>
+
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </div>
   );
 }
