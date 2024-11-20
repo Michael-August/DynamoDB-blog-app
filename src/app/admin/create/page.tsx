@@ -10,7 +10,9 @@ import { toast } from 'react-toastify';
 import dynamic from 'next/dynamic';
 import TagInput from '@/components/TagInput';
 
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
+import "react-quill/dist/quill.snow.css"
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const Page = () => {
     const [imagePreview, setImagePreview] = useState<any>(null);
@@ -29,6 +31,34 @@ const Page = () => {
         control,
         setValue,
     } = useForm();
+
+    // React Quill modules for toolbar configuration
+    const modules = {
+        toolbar: [
+            [{ size: [] }],
+            [{ header: "1" }, { header: "2" }, { font: [] }],
+            ["bold", "italic", "underline", "strike", "blockquote"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link", "image", "video"],
+            ["clean"], // Removes formatting
+        ],
+    };
+
+    const formats = [
+        "header",
+        "font",
+        "size",
+        "bold",
+        "italic",
+        "underline",
+        "strike",
+        "blockquote",
+        "list",
+        "bullet",
+        "link",
+        "image",
+        "video",
+    ];
 
     const handleImageUpload = (e: any) => {
         const file = e.target.files[0];
@@ -132,16 +162,25 @@ const Page = () => {
                     <div className="form-group flex flex-col gap-4">
                         <label>Content</label>
                         <Controller
-                            name='content'
+                            name="content"
                             control={control}
-                            render={({field}) => <SimpleMDE className='bg-transparent' {...field} />}
+                            render={({ field }) => (
+                                <ReactQuill
+                                    className="bg-white h-96"
+                                    theme="snow"
+                                    modules={modules}
+                                    formats={formats}
+                                    {...field}
+                                    onChange={(value) => field.onChange(value)}
+                                />
+                            )}
                         />
                         
                     </div>
 
                     {
-                        !slug ? <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
-                            : <button className='w-full p-2 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>
+                        !slug ? <button className='w-full p-2 mt-10 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
+                            : <button className='w-full p-2 mt-10 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>
                     }
                 </form>
             </div>

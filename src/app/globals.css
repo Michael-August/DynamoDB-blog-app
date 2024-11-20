@@ -66,6 +66,31 @@ figure:hover img {
 	background-color: #005bb5;
 }
 
+.ql-editor a {
+	color: #007bff;
+	text-decoration: underline;
+}
+
+.ql-editor a:hover {
+	color: #0056b3;
+}
+
+.quill-content h1,
+.quill-content h2,
+.quill-content h3 {
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.quill-content p {
+	margin: 0 0 1rem;
+}
+
+.quill-content ul li {
+	padding-left: 1.5rem;
+	list-style-type: disc;
+}
+
 @layer utilities {
 	.text-balance {
 		text-wrap: balance;

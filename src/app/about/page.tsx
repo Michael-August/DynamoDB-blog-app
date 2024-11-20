@@ -10,6 +10,11 @@ import { GrGallery } from "react-icons/gr"
 
 import image1 from "@/public/images/image-1.jpg"
 import image2 from "@/public/images/image-2.jpg"
+import image3 from "@/public/images/image-3.jpg"
+import image4 from "@/public/images/image-4.jpg"
+import image5 from "@/public/images/image-5.jpg"
+import image6 from "@/public/images/image-6.jpg"
+import image7 from "@/public/images/image-7.jpg"
 
 import book1 from "@/public/images/book1.jpg"
 import book2 from "@/public/images/book2.jpg"
@@ -77,6 +82,21 @@ const Page = () => {
                     </div>
                     <div className="gallery-item">
                         <Image src={image2} width={0} height={0} alt={''} />
+                    </div>
+                    <div className="gallery-item">
+                        <Image src={image6} width={0} height={0} alt={''} />
+                    </div>
+                    <div className="gallery-item">
+                        <Image src={image4} width={0} height={0} alt={''} />
+                    </div>
+                    <div className="gallery-item">
+                        <Image src={image5} width={0} height={0} alt={''} />
+                    </div>
+                    <div className="gallery-item">
+                        <Image src={image7} width={0} height={0} alt={''} />
+                    </div>
+                    <div className="gallery-item">
+                        <Image src={image3} width={0} height={0} alt={''} />
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AiOutlineTwitter, AiFillFacebook, AiFillLinkedin } from 'react-icons/ai'
+import { AiOutlineTwitter, AiFillFacebook, AiFillLinkedin, AiOutlineMedium } from 'react-icons/ai'
 import { MdEmail } from 'react-icons/md'
 
 const Footer = () => {
@@ -12,17 +12,14 @@ const Footer = () => {
                 © {new Date().getFullYear()} Ewere Diagboya | All Right Reserved 
             </div>
             <div className="flex gap-5">
-                <a className='border border-white rounded-full p-2' href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer">
+                <a className='border border-white rounded-full p-2' href="https://x.com/nimboya" target="_blank" rel="noopener noreferrer">
                     <AiOutlineTwitter size={24} />
                 </a>
-                <a className='border border-white rounded-full p-2' href="https://www.facebook.com/yourpage" target="_blank" rel="noopener noreferrer">
-                    <AiFillFacebook size={24} />
+                <a className='border border-white rounded-full p-2' href="https://medium.com/@nimboya" target="_blank" rel="noopener noreferrer">
+                    <AiOutlineMedium size={24} />
                 </a>
-                <a className='border border-white rounded-full p-2' href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
+                <a className='border border-white rounded-full p-2' href="https://LinkedIn.com/in/ewere" target="_blank" rel="noopener noreferrer">
                     <AiFillLinkedin size={24}  />
-                </a>
-                <a className='border border-white rounded-full p-2' href="mailto:your@email.com" target="_blank" rel="noopener noreferrer">
-                    <MdEmail size={24} />
                 </a>
             </div>
         </div>

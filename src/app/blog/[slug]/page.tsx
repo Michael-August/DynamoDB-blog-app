@@ -109,7 +109,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
 
                     {/* Content section */}
-                    <div className="my-8">
+                    {/* <div className="my-8">
                         <ReactMarkdown
                             components={{
                                 a: ({ href, children }) => (
@@ -120,7 +120,11 @@ const Page = ({params}: { params: { slug: string } }) => {
                             }}
                             skipHtml={false}
                             rehypePlugins={[rehypeRaw]}>{DOMPurify.sanitize(blog?.content)}</ReactMarkdown>
-                    </div>
+                    </div> */}
+                    <div
+                        className="ql-editor"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog?.content) }}
+                    ></div>
 
                     <div className="footer my-8">
                         <div className="profile-share flex flex-wrap items-center justify-between gap-4">
