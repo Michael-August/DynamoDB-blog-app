@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdComponent from '@/components/AdsenseSlot';
 
 export const metadata: Metadata = {
-  title: "Ewere",
+  title: "Home for all DevOps, AWS and Cloud-native Content",
 };
 
 export default function MainRootLayout({ children,
@@ -32,7 +32,7 @@ export default function MainRootLayout({ children,
         {/* Google Analytics Scripts */}
         <Script
           strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=G-W7QZT1RWGW`}
         />
         <Script
           id="gtag-init"
@@ -42,7 +42,7 @@ export default function MainRootLayout({ children,
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}', {
+              gtag('config', 'G-W7QZT1RWGW', {
                 page_path: window.location.pathname,
               });
             `,
@@ -51,7 +51,7 @@ export default function MainRootLayout({ children,
 
       </head>
       <body className="container mx-auto bg-[#f7fbff]">
-        <GoogleAnalytics gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} trackPageViews />
+        <GoogleAnalytics gaMeasurementId="G-W7QZT1RWGW" trackPageViews />
         <ToastContainer
             position="top-center"
             closeButton={true}
