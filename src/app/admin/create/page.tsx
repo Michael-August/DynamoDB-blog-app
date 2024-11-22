@@ -112,6 +112,7 @@ const Page = () => {
 
             setValue("title", fetchedArticle.title);
             setValue("content", fetchedArticle.content);
+            setTags(fetchedArticle.tags)
             setImagePreview(fetchedArticle.imageUrl);
         } catch (error: any) {
             toast.error(error.message)
@@ -140,7 +141,7 @@ const Page = () => {
                 <span className='text-base lg:text-xl font-semibold'>Just Write</span>
                 {/* <span className='text-sm lg:text-base'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempore laborum explicabo alias quidem cupiditate, molestiae sint vitae similique iure et tempora voluptas error id sunt doloribus eveniet. Unde nostrum at, numquam omnis suscipit laboriosam fugiat odio perferendis voluptatum. Consequuntur accusantium possimus quos eveniet, fugit natus blanditiis repudiandae magnam cum minima!</span> */}
             </div>
-            <div className="form lg:px-28 mt-10 mb-10 lg:mb-14">
+            <div className="form mt-10 mb-10 lg:mb-14">
                 <form className='flex flex-col gap-5' onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-group flex flex-col gap-4">
                         <label htmlFor="image-upload">Select Article Image</label>
@@ -160,13 +161,13 @@ const Page = () => {
                         <input {...register("title", { required: "Title is required" })} className='border border-gray-600 bg-transparent p-2 rounded-lg focus:outline-none focus:ring-0' type="text" name='title' placeholder='Article Title' />
                     </div>
                     <div className="form-group flex flex-col gap-4">
-                        <label>Content</label>
+                        {/* <label>Content</label> */}
                         <Controller
                             name="content"
                             control={control}
                             render={({ field }) => (
                                 <ReactQuill
-                                    className="bg-white h-96"
+                                    className="bg-white h-[80vh]"
                                     theme="snow"
                                     modules={modules}
                                     formats={formats}
@@ -179,8 +180,8 @@ const Page = () => {
                     </div>
 
                     {
-                        !slug ? <button className='w-full p-2 mt-10 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
-                            : <button className='w-full p-2 mt-10 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>
+                        !slug ? <button className='w-full p-2 mt-14 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Create Article</button>
+                            : <button className='w-full p-2 mt-14 bg-black text-white rounded-lg transition-all hover:bg-black/50'>Edit Article</button>
                     }
                 </form>
             </div>

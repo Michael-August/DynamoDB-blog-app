@@ -56,6 +56,8 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const title = formData.get('title')
     const content = formData.get('content')
     const id = formData.get('id')
+    const tags = JSON.parse(formData.get("tags") as string)
+
     let imageUrl;
 
     if (formData.get("imageUrl")) {
@@ -82,11 +84,12 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const params = {
       TableName: 'Blog',
       Key: { id: id },
-      UpdateExpression: 'set #title = :title, content = :content, imageUrl = if_not_exists(imageUrl, :imageUrl)',
+      UpdateExpression: 'set #title = :title, content = :content, tags =:tags, imageUrl = if_not_exists(imageUrl, :imageUrl)',
       ExpressionAttributeNames: { '#title': 'title' },
       ExpressionAttributeValues: {
         ':title': title,
         ':content': content,
+        ':tags': tags,
         ':imageUrl': imageUrl || '',
       },
       ReturnValues: ReturnValue.ALL_NEW,
