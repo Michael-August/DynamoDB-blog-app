@@ -97,6 +97,7 @@ const Page = () => {
             router.push("/admin")
             localStorage.removeItem("slug")
         } catch (error: any) {
+            console.log(error)
             toast.error(`${error?.message}`)
         } finally {
             setLoading(false)
@@ -110,11 +111,12 @@ const Page = () => {
             const fetchedArticle = response.data?.article;
             setArticle(response.data?.article);
 
-            setValue("title", fetchedArticle.title);
-            setValue("content", fetchedArticle.content);
-            setTags(fetchedArticle.tags)
-            setImagePreview(fetchedArticle.imageUrl);
+            setValue("title", fetchedArticle?.title);
+            setValue("content", fetchedArticle?.content);
+            setTags(fetchedArticle?.tags)
+            setImagePreview(fetchedArticle?.imageUrl);
         } catch (error: any) {
+            console.log(error)
             toast.error(error.message)
         }
     };

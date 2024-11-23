@@ -17,7 +17,7 @@ const TagInput = ({ tags, setTags }: { tags: string[]; setTags: (tags: string[])
   return (
     <div>
       <div className="flex gap-2 flex-wrap mb-2">
-        {tags.map((tag, index) => (
+        {tags?.map((tag, index) => (
           <span key={index} className="bg-gray-900 text-white px-2 py-1 rounded-full text-sm flex items-center">
             {tag}
             <button
