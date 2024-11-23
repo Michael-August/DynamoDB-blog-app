@@ -77,10 +77,15 @@ const Page = () => {
         setLoading(true)
         const formData = new FormData();
 
-        if (data.image && data.image[0]) {
-            formData.append('image', data?.image[0]);
-        } else if (article?.imageUrl) {
-            formData.append('imageUrl', article?.imageUrl);
+        // Check if we're updating an existing article
+        if (article?.imageUrl) {
+            // If the user hasn't uploaded a new image, use the existing image URL
+            if (!data.image || !data.image[0]) {
+                formData.append('imageUrl', article?.imageUrl);
+            } else {
+                // If the user has uploaded a new image, add it to the form data
+                formData.append('image', data?.image[0]);
+            }
             formData.append('id', article?.id);
         }
 

@@ -29,6 +29,7 @@ export default function MainRootLayout({ children,
           strategy="afterInteractive"
         />
 
+        <title>Home for all DevOps, AWS and Cloud-native Content</title>
         {/* Google Analytics Scripts */}
         <Script
           strategy="afterInteractive"

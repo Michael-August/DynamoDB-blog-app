@@ -62,6 +62,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
 
     if (formData.get("imageUrl")) {
       imageUrl = formData.get("imageUrl")
+      console.log(imageUrl)
     } else {
       const file = formData.get('image') as File;
       if (file) {
@@ -84,16 +85,18 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const params = {
       TableName: 'Blog',
       Key: { id: id },
-      UpdateExpression: 'set #title = :title, content = :content, tags =:tags, imageUrl = if_not_exists(imageUrl, :imageUrl)',
+      UpdateExpression: 'set #title = :title, content = :content, tags =:tags, imageUrl = :imageUrl',
       ExpressionAttributeNames: { '#title': 'title' },
       ExpressionAttributeValues: {
         ':title': title,
         ':content': content,
         ':tags': tags,
-        ':imageUrl': imageUrl || '',
+        ':imageUrl': imageUrl,
       },
       ReturnValues: ReturnValue.ALL_NEW,
     };
+
+    console.log(params)
 
     const command = new UpdateCommand(params);
     const data = await dynamoDb.send(command);

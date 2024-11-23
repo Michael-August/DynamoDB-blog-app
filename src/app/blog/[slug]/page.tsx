@@ -56,6 +56,8 @@ const Page = ({params}: { params: { slug: string } }) => {
         if (blog) {
             fetchSimilarBlogs();
         }
+
+        document.title = `${blog?.title} - Ewere Diagboya`;
     }, [blog]);
     
     return (
