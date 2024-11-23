@@ -78,14 +78,14 @@ const Page = () => {
         const formData = new FormData();
 
         if (data.image && data.image[0]) {
-            formData.append('image', data.image[0]);
+            formData.append('image', data?.image[0]);
         } else if (article?.imageUrl) {
-            formData.append('imageUrl', article.imageUrl);
-            formData.append('id', article.id);
+            formData.append('imageUrl', article?.imageUrl);
+            formData.append('id', article?.id);
         }
 
-        formData.append('title', data.title);
-        formData.append('content', data.content);
+        formData.append('title', data?.title);
+        formData.append('content', data?.content);
         formData.append('tags', JSON.stringify(tags));
 
         try {
@@ -93,11 +93,10 @@ const Page = () => {
             const method = slug ? 'put' : 'post';
 
             const response = await axios({ method, url: endpoint, data: formData });
-            toast.success(`${response.data?.message}`)
+            toast.success(`${response?.data?.message}`)
             router.push("/admin")
             localStorage.removeItem("slug")
         } catch (error: any) {
-            console.log(error)
             toast.error(`${error?.message}`)
         } finally {
             setLoading(false)
@@ -108,15 +107,14 @@ const Page = () => {
         
         try {
             const response = await axios.get(`/apis/articles/${slug}`);
-            const fetchedArticle = response.data?.article;
-            setArticle(response.data?.article);
+            const fetchedArticle = response?.data?.article;
+            setArticle(response?.data?.article);
 
             setValue("title", fetchedArticle?.title);
             setValue("content", fetchedArticle?.content);
             setTags(fetchedArticle?.tags)
             setImagePreview(fetchedArticle?.imageUrl);
         } catch (error: any) {
-            console.log(error)
             toast.error(error.message)
         }
     };

@@ -4,14 +4,14 @@ const TagInput = ({ tags, setTags }: { tags: string[]; setTags: (tags: string[])
   const [tag, setTag] = useState("");
 
   const addTag = () => {
-    if (tag.trim() && !tags.includes(tag)) {
-      setTags([...tags, tag.trim()]);
+    if (tag.trim() && !tags?.includes(tag)) {
+      setTags([...(tags || []), tag.trim()]);
       setTag(""); // Clear the input
     }
   };
 
   const removeTag = (indexToRemove: number) => {
-    setTags(tags.filter((_, index) => index !== indexToRemove));
+    setTags(tags?.filter((_, index) => index !== indexToRemove));
   };
 
   return (

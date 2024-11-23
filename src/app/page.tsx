@@ -57,7 +57,7 @@ export default function Home() {
       <div className="articles px-4 py-5 mb-10">
         <div className="top flex items-center gap-4 text-black mb-10">
           {/* <AiFillRead className="font-semibold text-3xl text-slate-800" /> */}
-          <span className="font-semibold text-3xl">Home for all DevOps, AWS and Cloud-native Content</span>
+          <span className="font-semibold text-base lg:text-3xl">Home for all DevOps, AWS and Cloud-native Content</span>
         </div>
 
         {loading ?
