@@ -87,6 +87,8 @@ const Page = () => {
                 formData.append('image', data?.image[0]);
             }
             formData.append('id', article?.id);
+        } else {
+            formData.append('image', data?.image[0]);
         }
 
         formData.append('title', data?.title);

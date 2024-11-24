@@ -104,7 +104,7 @@ const Page = () => {
             <Loader2 className="h-8 w-8 animate-spin text-black" />
         </div> : 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4'>
-        {articles.map((article: any, index:number) => (
+        {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any, index:number) => (
           <div key={article.id} onClick={() => { if (openActions === index) setOpenActions(null) }} className="max-w-xs w-full group/card">
             <div
               style={{ backgroundImage: `url(${article.imageUrl})`, backgroundSize: 'cover' }}

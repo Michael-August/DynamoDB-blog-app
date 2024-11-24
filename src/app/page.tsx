@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
@@ -19,6 +20,8 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
 
   const [lastKey, setLastKey] = useState(null);
+
+  const pathname = usePathname();
 
   useEffect(() => {
     const queryParams = new URLSearchParams();
@@ -41,6 +44,13 @@ export default function Home() {
 
     fetchData();
   }, [currentPage])
+
+  useEffect(() => {
+    // Default title for the home page
+    if (pathname === '/') {
+        document.title = "Home for all DevOps, AWS and Cloud-native Content";
+    }
+  }, [pathname]);
   return (
     <div>
       {/* <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
@@ -65,7 +75,7 @@ export default function Home() {
             <Loader2 className="h-8 w-8 animate-spin text-black" />
           </div> :
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
-              {articles.map((article: any) => (
+              {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
                   <BlogCard blog={article} key={article.id} />
               ))}
           </div>

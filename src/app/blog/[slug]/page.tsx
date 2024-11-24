@@ -57,8 +57,12 @@ const Page = ({params}: { params: { slug: string } }) => {
             fetchSimilarBlogs();
         }
 
-        document.title = `${blog?.title} - Ewere Diagboya`;
-    }, [blog]);
+        if (loading) {
+            document.title = "Loading Article... - Ewere Diagboya";
+        } else {
+            document.title = `${blog?.title} - Ewere Diagboya`
+        }
+    }, [blog, loading]);
     
     return (
         <>
@@ -106,8 +110,15 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
 
                     {/* Blog Image */}
-                    <div className='my-4 w-full h-[30rem]'>
-                        <Image className='w-[inherit] h-[inherit] object-cover rounded-3xl' src={blog?.imageUrl || blogImg} width={100} height={100} alt="blog img" />
+                    <div className="my-4 w-full h-[30rem] relative">
+                        <Image
+                            src={blog?.imageUrl || blogImg}
+                            alt="blog img"
+                            className="rounded-3xl object-cover"
+                            fill
+                            quality={100} // Ensures better quality
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
                     </div>
 
                     {/* Content section */}

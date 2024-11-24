@@ -29,6 +29,8 @@ export async function POST(req: Request) {
     const content = formData.get('content')
     const tags = JSON.parse(formData.get("tags") as string)
 
+    console.log(file)
+
     if (!title) {
       return Response.json({ error: 'Please provide Title' }, { status: 400 });
     }
