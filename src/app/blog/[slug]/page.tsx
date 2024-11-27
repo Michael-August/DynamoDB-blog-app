@@ -185,7 +185,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                         {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
                                 {similarArticles?.map((article: any) => (
-                                    <BlogPostCard title={article.title} imageUrl={article.imageUrl} tags={article.tags} slug={article.slug} />
+                                    <BlogPostCard key={article.id} title={article.title} imageUrl={article.imageUrl} tags={article.tags} slug={article.slug} />
                                 ))}
                             </div>
                         }
