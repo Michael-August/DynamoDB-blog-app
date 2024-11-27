@@ -1,6 +1,10 @@
+"use client"
+
 import Image from "next/image"
 
 import aboutImage from "@/public/images/image-2.jpg"
+
+import {motion} from "framer-motion"
 
 import React from 'react'
 import { AwardCards } from "@/components/AwardCards"
@@ -52,24 +56,41 @@ const Page = () => {
     return (
         <div>
             <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-10 pt-5">
-                <div> 
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.5 }}
+                > 
                     <Image src={ aboutImage } className="w-[inherit] h-[inherit]" alt={""} />
-                </div>
-                <div className="details text-center md:text-left leading-6 text-sm lg:text-base lg:leading-10">
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="details text-center md:text-left leading-6 text-sm lg:text-base lg:leading-10">
                     <span className="font-semibold text-gray-800 text-2xl lg:text-3xl">Ewere Diagboya </span>
-                    <span>
+                    <span
+                       
+                    >
                         started his career in tech in 2003. He started as a Software Developer in PHP, Visual Basic, HTML, and CSS. He later switched to DevOps and Cloud in 2015. He is the first AWS Community Hero in Africa and the author of two books: Infrastructure Monitoring with Amazon CloudWatch and Techtionary which are available on Amazon.com. He is an AWS Community leader in Nigeria. He loves to talk about Cloud Computing, DevOps, and innovations around efficient software delivery technologies and processes. He has also been a two-time judge for the Cybersafe Foundation Cybergirls Fellowship and PipeOps Hackathon.
                     </span>
-                </div>
+                </motion.div>
             </div>
 
-            <div className="mb-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="mb-8">
                 <div className="top flex items-center gap-4 text-black mb-5">
                     <FaAward className="font-semibold text-3xl text-slate-800" />
                     <span className="font-semibold text-3xl">Awards</span>
                 </div>
                 <AwardCards items={Awards} />
-            </div>
+            </motion.div>
 
             <div className="mb-8">
                 <div className="top flex items-center gap-4 text-black mb-5">

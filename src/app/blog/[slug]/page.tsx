@@ -21,6 +21,14 @@ import {AnimatePresence, motion} from "framer-motion"
 
 import image2 from "@/public/images/image-2.jpg"
 import BlogCard from '@/components/BlogCard';
+import Link from 'next/link';
+
+interface BlogPostCardProps {
+  title: string;
+  slug?: string;
+  imageUrl: string;
+  tags: string[];
+}
 
 const Page = ({params}: { params: { slug: string } }) => {
 
@@ -51,7 +59,7 @@ const Page = ({params}: { params: { slug: string } }) => {
         );
         const data = await response.json();
         if (data.success) {
-            setSimilarArticles(data.blogs);
+            setSimilarArticles(data.posts);
         }
         };
 
@@ -177,7 +185,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                         {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
                                 {similarArticles?.map((article: any) => (
-                                    <BlogCard blog={article} key={article.id} />
+                                    <BlogPostCard title={article.title} imageUrl={article.imageUrl} tags={article.tags} slug={article.slug} />
                                 ))}
                             </div>
                         }
@@ -206,5 +214,37 @@ const SocialMediaSharing = ({ url, title }: { url: string; title: string }) => {
         </div>
     );
 };
+
+export const BlogPostCard: React.FC<BlogPostCardProps> = ({
+  title,
+  slug,
+  imageUrl,
+  tags,
+}) => {
+  return (
+    <Link className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${slug}`}>
+      <img
+        src={imageUrl}
+        alt={title}
+        className="w-full h-48 object-cover"
+      />
+
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="text-xs bg-gray-200 text-gray-700 py-1 px-2 rounded"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </Link>
+  );
+};
+
 
 export default Page
