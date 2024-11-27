@@ -8,6 +8,8 @@ import Image from "next/image";
 import nextBtn from "@/public/icons/next.png";
 import previousBtn from "@/public/icons/previous.png";
 
+import {motion} from "framer-motion"
+
 interface PaginationProps {
   page: number;
   totalPages: number;
@@ -47,7 +49,12 @@ const Pagination: FC<PaginationProps> = (props) => {
   const pages = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-center mt-5 lg:justify-end gap-2 text-black">
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.5 }}
+      className="flex items-center justify-center mt-5 lg:justify-end gap-2 text-black">
       {/* Previous Button */}
       <button
         onClick={() => onPageChange(Math.max(page - 1, 1))}
@@ -100,7 +107,7 @@ const Pagination: FC<PaginationProps> = (props) => {
       >
         <Image src={nextBtn} alt="Next" />
       </button>
-    </div>
+    </motion.div>
   );
 };
 

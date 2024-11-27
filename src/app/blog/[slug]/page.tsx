@@ -17,6 +17,8 @@ import { Loader2 } from 'lucide-react';
 import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton } from 'react-share';
 import ArticleTags from '@/components/ArticleTags';
 
+import {AnimatePresence, motion} from "framer-motion"
+
 import image2 from "@/public/images/image-2.jpg"
 import BlogCard from '@/components/BlogCard';
 
@@ -65,7 +67,7 @@ const Page = ({params}: { params: { slug: string } }) => {
     }, [blog, loading]);
     
     return (
-        <>
+        <AnimatePresence>
             {loading ? 
                 <div className="mx-auto flex h-64 w-full items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-black" />
@@ -73,7 +75,12 @@ const Page = ({params}: { params: { slug: string } }) => {
 
                 <div className="">
                     <div>
-                        <p className="text-3xl font-semibold text-black mb-4">{blog?.title || "Test Title"}</p>
+                        <motion.p
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-3xl font-semibold text-black mb-4">{blog?.title || "Test Title"}</motion.p>
                         {
                             (blog?.subTitle && blog.subTitle !== '') && (
                                 <p className="text-lg mb-4 italic text-black">{blog.title || "Test subtitle"}</p>
@@ -86,7 +93,12 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
 
                     {/* author details */}
-                    <div className="flex flex-wrap justify-start gap-4 md:gap-8 lg:gap-8 mt-6 mb-4">
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.5 }}
+                        className="flex flex-wrap justify-start gap-4 md:gap-8 lg:gap-8 mt-6 mb-4">
                         <div className="flex justify-start gap-2">
                             {/* author img */}
                             <div>
@@ -103,14 +115,19 @@ const Page = ({params}: { params: { slug: string } }) => {
                                 { moment(blog?.createdAt).format("Do MMMM YYYY")}
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     <div className='mt-6 mb-4'>
                         <ArticleTags tags={blog?.tags} />
                     </div>
 
                     {/* Blog Image */}
-                    <div className="my-4 w-full h-[30rem] relative">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="my-4 w-full h-[30rem] relative">
                         <Image
                             src={blog?.imageUrl || blogImg}
                             alt="blog img"
@@ -119,7 +136,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                             quality={100} // Ensures better quality
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                    </div>
+                    </motion.div>
 
                     {/* Content section */}
                     {/* <div className="my-8">
@@ -134,10 +151,14 @@ const Page = ({params}: { params: { slug: string } }) => {
                             skipHtml={false}
                             rehypePlugins={[rehypeRaw]}>{DOMPurify.sanitize(blog?.content)}</ReactMarkdown>
                     </div> */}
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5 }}
                         className="ql-editor"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog?.content) }}
-                    ></div>
+                    ></motion.div>
 
                     <div className="footer my-8">
                         <div className="profile-share flex flex-wrap items-center justify-between gap-4">
@@ -163,7 +184,7 @@ const Page = ({params}: { params: { slug: string } }) => {
                     </div>
                 </div>
             }
-        </>
+        </AnimatePresence>
     )
 }
 
