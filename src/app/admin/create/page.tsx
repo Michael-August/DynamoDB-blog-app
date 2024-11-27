@@ -16,7 +16,7 @@ import { Loader2 } from "lucide-react";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const Page = () => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<any>(null);
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
@@ -56,14 +56,19 @@ const Page = () => {
     "video",
   ];
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setImagePreview(imageURL);
-      setValue("image", file); // Set file in form state
-    }
-  };
+  const handleImageUpload = (e: any) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+          const base64String = reader.result;
+          setImagePreview(base64String);
+      };
+
+    reader.readAsDataURL(file);
+    console.log(e.target.files)
+      setValue('image', e.target.files);
+  }
 
   const fetchData = async (slug: string) => {
     try {
@@ -155,8 +160,9 @@ const Page = () => {
               <label htmlFor="image-upload">Select Article Image</label>
               <input
                 type="file"
+                name="image"
                 id="image-upload"
-                onChange={handleImageUpload}
+                onChange={(e) => handleImageUpload(e)}
               />
               {imagePreview && (
                 <Image

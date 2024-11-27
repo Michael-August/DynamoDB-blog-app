@@ -20,12 +20,16 @@ export async function GET(req: NextRequest) {
     const params = {
       TableName: "Blog",
       FilterExpression:
-        "id <> :blogId AND (contains(tags, :tag1) OR contains(tags, :tag2) OR contains(tags, :tag3))",
+        "id <> :blogId AND (contains(tags, :tag1) OR contains(tags, :tag2) OR contains(tags, :tag3)) AND #status = :status",
+      ExpressionAttributeNames: {
+        '#status': 'status', // Map reserved keyword 'status' to '#status'
+      },
       ExpressionAttributeValues: {
         ":blogId": blogId,
         ":tag1": tags[0] || "",
         ":tag2": tags[1] || "",
         ":tag3": tags[2] || "",
+        ":status": "published",
       },
     };
 
