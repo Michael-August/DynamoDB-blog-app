@@ -10,6 +10,8 @@ import Script from 'next/script';
 import 'react-toastify/dist/ReactToastify.css';
 import AdComponent from '@/components/AdsenseSlot';
 
+import {motion} from "framer-motion"
+
 export const metadata: Metadata = {
   title: "Home for all DevOps, AWS and Cloud-native Content",
 };
@@ -58,7 +60,14 @@ export default function MainRootLayout({ children,
         />
         <NavBar />
         <div className='flex flex-col mt-20 px-2 md:px-4 md:gap-5'>
-          <Breadcrumb />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Breadcrumb />
+          </motion.div>
           <div className="flex flex-col-reverse md:flex-row">
             <div className="md:flex-[8]">
               {children}

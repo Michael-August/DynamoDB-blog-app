@@ -4,6 +4,8 @@ import BlogCard from "@/components/BlogCard";
 import { AiFillRead } from "react-icons/ai";
 import Image from "next/image";
 
+import { motion } from "framer-motion";
+
 import banner from "@/public/images/main-image.jpg"
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -64,7 +66,13 @@ export default function Home() {
           </span>
         </div>
       </div> */}
-      <div className="articles px-4 py-5 mb-10">
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.5 }}
+        className="articles px-4 py-5 mb-10"
+      >
         <div className="top flex items-center gap-4 text-black mb-10">
           {/* <AiFillRead className="font-semibold text-3xl text-slate-800" /> */}
           <span className="font-semibold text-base lg:text-3xl">Home for all DevOps, AWS and Cloud-native Content</span>
@@ -74,13 +82,18 @@ export default function Home() {
           <div className="mx-auto flex h-64 w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-black" />
           </div> :
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+          <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
               {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
                   <BlogCard blog={article} key={article.id} />
               ))}
-          </div>
+          </motion.div>
         }
-      </div>
+      </motion.div>
 
       <Pagination
         page={currentPage}

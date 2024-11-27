@@ -3,7 +3,9 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import {motion} from "framer-motion"
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai'
+
 
 const NavBar = () => {
 
@@ -17,11 +19,16 @@ const NavBar = () => {
     const router = useRouter()
     
     return (
-        <div className='relative '>
+        <div className='relative'>
             <nav className='fixed bg-[#f7fbff] z-50 top-0 flex items-center w-full justify-between mx-auto px-2 md:px-4 container py-4'>
-                <div className="logo text-base lg:text-xl font-semibold">
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.5 }}
+                    className="logo text-base lg:text-xl font-semibold">
                     <Link href={"/"}>Ewere Diagboya</Link>
-                </div>
+                </motion.div>
                 {/* <ul className='hidden lg:flex lg:items-center lg:gap-5'>
                     <li>
                         <Link href={"/"}>Home</Link>
@@ -39,12 +46,17 @@ const NavBar = () => {
                         }
                     </li>
                 </ul> */}
-                <div className='flex items-center gap-4'>
+                <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className='flex items-center gap-4'>
                     <Link href={"/about"} className='border-2 border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                         About
                     </Link>
                     {(pathname === "/admin/" || pathname === "/admin/create/") && <div className='cursor-pointer hidden lg:block' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
-                </div>
+                </motion.div>
                 {/* <div className="icon block lg:hidden cursor-pointer" onClick={toggleMobileMenu}>
                     {isMobileMenuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
                 </div> */}

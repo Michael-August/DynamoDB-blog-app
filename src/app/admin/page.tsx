@@ -12,6 +12,8 @@ import moment from 'moment';
 import { FaEllipsisV } from 'react-icons/fa';
 import { Loader2 } from 'lucide-react';
 
+import {motion} from "framer-motion"
+
 const Page = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,13 @@ const Page = () => {
         <div className="mx-auto flex h-64 w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-black" />
         </div> : 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+          className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4'
+        >
         {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any, index:number) => (
           <div key={article.id} onClick={() => { if (openActions === index) setOpenActions(null) }} className="max-w-xs w-full group/card">
             <div
@@ -159,7 +167,7 @@ const Page = () => {
               </div>
           </div>
         ))}
-          </div>
+          </motion.div>
       }
     </div>
     
