@@ -215,7 +215,7 @@ const SocialMediaSharing = ({ url, title }: { url: string; title: string }) => {
     );
 };
 
-export const BlogPostCard: React.FC<BlogPostCardProps> = ({
+const BlogPostCard: React.FC<BlogPostCardProps> = ({
   title,
   slug,
   imageUrl,
