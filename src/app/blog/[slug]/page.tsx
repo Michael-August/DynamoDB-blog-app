@@ -73,6 +73,10 @@ const Page = ({params}: { params: { slug: string } }) => {
             document.title = `${blog?.title} - Ewere Diagboya`
         }
     }, [blog, loading]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     
     return (
         <AnimatePresence>
