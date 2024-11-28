@@ -1,6 +1,6 @@
 import Head from "next/head";
 import config from "../../config";
-export default function SEO({ description, title, image, slug, article }) {
+export default function SEO({ description, title, image, slug, article }: {description: string, title: string, image: any, slug: string, article: string}) {
   const {
     originalTitle,
     originalDescription,

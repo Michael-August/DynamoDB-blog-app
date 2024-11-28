@@ -2,12 +2,16 @@
 
 import axios from 'axios';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 
 const SideBar = () => {
 
     const [articles, setArticles] = useState([]);
+
+    const pathname = usePathname();
+    const currentSlug = pathname.split("/")[2];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,9 +26,13 @@ const SideBar = () => {
         fetchData();
     }, [])
 
+    const filteredArticles = articles?.filter(
+        (article: any) => article?.slug !== currentSlug
+    );
+
     return (
         <div>
-            {articles?.map((article: any) => (
+            {filteredArticles?.map((article: any) => (
                 <Link key={article?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${article?.slug}`}>
                     <img
                         src={article?.imageUrl}
