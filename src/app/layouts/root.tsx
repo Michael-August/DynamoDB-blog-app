@@ -1,3 +1,5 @@
+"use client"
+
 import Breadcrumb from '@/components/Breadcrumb';
 import Footer from '@/components/Footer';
 import NavBar from '@/components/NavBar';
@@ -11,6 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdComponent from '@/components/AdsenseSlot';
 
 import {motion} from "framer-motion"
+import SideBar from '@/components/SideBar';
+import { usePathname } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: "Home for all DevOps, AWS and Cloud-native Content",
@@ -20,6 +24,8 @@ export default function MainRootLayout({ children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  console.log(pathname)
   return (
     <html lang="en">
       <head>
@@ -68,12 +74,13 @@ export default function MainRootLayout({ children,
           >
             <Breadcrumb />
           </motion.div>
-          <div className="flex flex-col-reverse md:flex-row">
+          <div className="flex flex-col-reverse md:flex-row gap-5">
             <div className="md:flex-[8]">
               {children}
             </div>
-            <div className='md:flex-[2]'>
+            <div className='md:flex-[2] flex flex-col gap-4'>
               <AdComponent adSlot={''} />
+              {pathname !== '/' && <SideBar />}
             </div>
           </div>
         </div>

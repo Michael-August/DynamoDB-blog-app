@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import { usePathname } from "next/navigation";
+import { FaSearch } from "react-icons/fa";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
@@ -23,7 +24,26 @@ export default function Home() {
 
   const [lastKey, setLastKey] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  const debounceDelay = 1000;
+
   const pathname = usePathname();
+
+  const fetchData = async (searchValue?: string, queryParams?: any) => {
+    try {
+      const response = await axios.get(`/apis/public?${queryParams?.toString()}&&search=${searchValue ? searchValue : ''}`);
+      setArticles(response.data?.posts);
+      setLastKey(response.data?.lastKey);
+      setTotalPages(Math.ceil(response.data?.total / response.data?.limit))
+    } catch (error: any) {
+      toast.error(`${error.message}`)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const queryParams = new URLSearchParams();
@@ -31,21 +51,28 @@ export default function Home() {
     if (lastKey) {
       queryParams.append('lastKey', lastKey);
     }
-    const fetchData = async () => {
-        try {
-          const response = await axios.get(`/apis/public?${queryParams.toString()}`);
-          setArticles(response.data?.posts);
-          setLastKey(response.data?.lastKey);
-          setTotalPages(Math.ceil(response.data?.total / response.data?.limit))
-        } catch (error: any) {
-          toast.error(`${error.message}`)
-        } finally {
-          setLoading(false);
-        }
-    };
 
-    fetchData();
+    fetchData(undefined, queryParams);
   }, [currentPage])
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+    setDebouncedSearchTerm(searchTerm);
+    }, debounceDelay);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, debounceDelay]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      const search = async () => {
+          fetchData(debouncedSearchTerm)
+      };
+      search();
+    } else {
+      fetchData()
+    }
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     // Default title for the home page
@@ -66,6 +93,15 @@ export default function Home() {
           </span>
         </div>
       </div> */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.5 }}
+        className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'>
+        <FaSearch />
+        <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
+      </motion.div>
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}

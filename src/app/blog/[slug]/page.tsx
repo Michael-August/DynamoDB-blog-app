@@ -22,6 +22,7 @@ import {AnimatePresence, motion} from "framer-motion"
 import image2 from "@/public/images/image-2.jpg"
 import BlogCard from '@/components/BlogCard';
 import Link from 'next/link';
+import SEO from '@/components/Seo';
 
 interface BlogPostCardProps {
   title: string;
@@ -80,6 +81,7 @@ const Page = ({params}: { params: { slug: string } }) => {
     
     return (
         <AnimatePresence>
+            <SEO description={blog?.content.slice(0, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} />
             {loading ? 
                 <div className="mx-auto flex h-64 w-full items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-black" />
