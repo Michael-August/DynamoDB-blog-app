@@ -39,10 +39,6 @@ const Page = ({params}: { params: { slug: string } }) => {
 
     const [similarArticles, setSimilarArticles] = useState([]);
 
-    if (!blog) {
-        notFound();
-    }
-
     useEffect(() => {
         const fetchData = async () => {
             try {
