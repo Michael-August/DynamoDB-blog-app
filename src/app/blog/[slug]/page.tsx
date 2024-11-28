@@ -24,6 +24,8 @@ import BlogCard from '@/components/BlogCard';
 import Link from 'next/link';
 import SEO from '@/components/Seo';
 import { notFound } from 'next/navigation';
+import BlogSkeletonLoader from '@/components/Skeletons/BlogContentSkeleton';
+import NotFound from '@/app/not-found';
 
 interface BlogPostCardProps {
   title: string;
@@ -37,19 +39,21 @@ const Page = ({params}: { params: { slug: string } }) => {
     const [blog, setBlog] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    const [similarArticles, setSimilarArticles] = useState([]);
+    const [error, setError] = useState(false);
 
-    if (!blog) {
-        notFound();
-    }
+    const [similarArticles, setSimilarArticles] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`/apis/articles/${params.slug}`);
+                if (!response.data?.article) {
+                    setError(true)
+                }
                 setBlog(response.data?.article);
             } catch (error: any) {
-                toast.error(error.message)
+                // toast.error(error.message)
+                setError(true)
             } finally {
                 setLoading(false);
             }
@@ -83,15 +87,16 @@ const Page = ({params}: { params: { slug: string } }) => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    if (error) {
+        return <NotFound />;
+    }
     
     return (
         <AnimatePresence>
             <SEO description={blog?.content.slice(0, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} />
             {loading ? 
-                <div className="mx-auto flex h-64 w-full items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-black" />
-                </div> :
-
+                <BlogSkeletonLoader /> :
                 <div className="">
                     <div>
                         <motion.p

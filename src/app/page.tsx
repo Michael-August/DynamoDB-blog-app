@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import { usePathname } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
+import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
@@ -115,9 +116,7 @@ export default function Home() {
         </div>
 
         {loading ?
-          <div className="mx-auto flex h-64 w-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-black" />
-          </div> :
+          <CardSkeletonLoader /> :
           <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
