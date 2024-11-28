@@ -23,6 +23,7 @@ import image2 from "@/public/images/image-2.jpg"
 import BlogCard from '@/components/BlogCard';
 import Link from 'next/link';
 import SEO from '@/components/Seo';
+import { notFound } from 'next/navigation';
 
 interface BlogPostCardProps {
   title: string;
@@ -37,6 +38,10 @@ const Page = ({params}: { params: { slug: string } }) => {
     const [loading, setLoading] = useState(true);
 
     const [similarArticles, setSimilarArticles] = useState([]);
+
+    if (!blog) {
+        notFound();
+    }
 
     useEffect(() => {
         const fetchData = async () => {
