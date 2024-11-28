@@ -9,11 +9,11 @@ import DOMPurify from "dompurify";
 
 export function Card({ title, imageUrl, date, content }: { title: string; imageUrl: string; date: any, content: string }) {
   return (
-    <div className="max-w-xs w-full group/card">
+    <div className="max-w-xs w-full group/card overflow-hidden">
         <div
             style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover' }}
             className={`
-            cursor-pointer overflow-hidden relative card h-96 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4
+            cursor-pointer hover:scale-110 transition-all duration-300 overflow-hidden relative card h-96 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4
             `}
         >
             <div className="absolute w-full h-full top-0 left-0 transition duration-300 bg-black opacity-80"></div>
