@@ -73,7 +73,7 @@ export default function MainRootLayout({ children,
           >
             <Breadcrumb />
           </motion.div>
-          <div className="flex flex-col-reverse md:flex-row gap-5">
+          <div className="flex flex-col md:flex-row gap-5">
             <div className="md:flex-[8]">
               {children}
             </div>
