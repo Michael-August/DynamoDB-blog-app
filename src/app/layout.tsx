@@ -1,5 +1,3 @@
-'use client';
-
 import 'react-toastify/dist/ReactToastify.css';
 
 import "./globals.css"
@@ -12,8 +10,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isAuthPage = pathname === '/auth';
+  
+  const pathname = typeof window === "undefined" ? "" : window.location.pathname;
+  
+  const isAuthPage = pathname.startsWith('/auth');
 
   if (isAuthPage) {
     return (

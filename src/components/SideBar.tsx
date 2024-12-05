@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 const SideBar = () => {
 
     const [articles, setArticles] = useState([]);
+    const [currentArticle, setCurrentArticle] = useState<any>(null);
 
     const pathname = usePathname();
     const currentSlug = pathname.split("/")[2];
@@ -18,6 +19,9 @@ const SideBar = () => {
             try {
                 const response = await axios.get(`/apis/public`);
                 setArticles(response.data?.posts);
+
+                const article = response.data?.posts.find((item: any) => item.slug === currentSlug);
+                setCurrentArticle(article);
             } catch (error: any) {
                 toast.error(`${error.message}`)
             }
@@ -26,9 +30,19 @@ const SideBar = () => {
         fetchData();
     }, [])
 
-    const filteredArticles = articles?.filter(
-        (article: any) => article?.slug !== currentSlug
-    );
+    const filteredArticles = articles.filter((article: any) => {
+        // Exclude the current article
+        if (article.slug === currentSlug) {
+        return false;
+        }
+
+        // Exclude articles with overlapping tags
+        if (currentArticle && currentArticle?.tags) {
+        return !article.tags?.some((tag: string) => currentArticle.tags.includes(tag));
+        }
+
+        return true;
+    });
 
     return (
         <div>

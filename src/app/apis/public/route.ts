@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       params.ExpressionAttributeValues[':search'] = search;
     }
 
-    const paginatedParams = { ...params, Limit: 10 };
+    const paginatedParams = { ...params, Limit: 18 };
     if (lastEvaluatedKey) {
       paginatedParams.ExclusiveStartKey = JSON.parse(lastEvaluatedKey);
     }
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       posts: paginatedData.Items,
       lastKey: paginatedData.LastEvaluatedKey ? JSON.stringify(paginatedData.LastEvaluatedKey) : null,
       total: countData.ScannedCount,
-      limit: 10,
+      limit: 20,
       message: "Fetch successful",
       success: true,
       status: 200,
