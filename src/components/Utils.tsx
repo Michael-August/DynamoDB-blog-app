@@ -1,7 +1,7 @@
 "use client"
 
 import { BlogPostCardProps } from "@/app/blog/[slug]/page";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton } from "react-share";
 

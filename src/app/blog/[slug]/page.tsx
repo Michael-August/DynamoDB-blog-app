@@ -93,8 +93,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: [
         {
           url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
-          width: 1200, // Recommended width
-          height: 630, // Recommended height
+          width: 1200,
+          height: 630,
           alt: title,
         },
       ],
