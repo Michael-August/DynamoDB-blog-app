@@ -38,29 +38,31 @@ interface BlogPageProps {
 
 // Server-side data fetching
 async function fetchBlog(slug: string): Promise<any | null> {
-  try {
-    const res = await fetch(`http://localhost:3000/apis/articles/${slug}`);
-    if (!res.ok) return null;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    try {
+        const res = await fetch(`${baseUrl}/apis/articles/${slug}`);
+        if (!res.ok) return null;
 
-    const { article } = await res.json();
-    return article;
-  } catch (err) {
-    console.error('Error fetching blog:', err);
-    return null;
-  }
+        const { article } = await res.json();
+        return article;
+    } catch (err) {
+        console.error('Error fetching blog:', err);
+        return null;
+    }
 }
 
 async function fetchSimilarArticles(blogId: string, tags: string[]): Promise<any[]> {
-  try {
-    const res = await fetch(
-      `http://localhost:3000/apis/similar?blogId=${blogId}&tags=${tags.join(',')}`
-    );
-    const { posts, success } = await res.json();
-    return success ? posts : [];
-  } catch (err) {
-    console.error('Error fetching similar articles:', err);
-    return [];
-  }
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    try {
+        const res = await fetch(
+            `${baseUrl}/apis/similar?blogId=${blogId}&tags=${tags.join(',')}`
+        );
+        const { posts, success } = await res.json();
+        return success ? posts : [];
+    } catch (err) {
+        console.error('Error fetching similar articles:', err);
+        return [];
+    }
 }
 
 // Dynamic metadata for SEO
