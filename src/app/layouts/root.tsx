@@ -28,6 +28,7 @@ export default function MainRootLayout({ children,
   return (
     <html lang="en">
       <head>
+        <meta name="monetag" content="3ffe5dbaabc8145ffa0719aade5c2483" />
         {/* Google tag (gtag.js) */}
         <Script
           async

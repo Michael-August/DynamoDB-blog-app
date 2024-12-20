@@ -4,7 +4,6 @@ import "./globals.css"
 import { usePathname } from "next/navigation";
 import AuthLayout from "./layouts/auth";
 import MainRootLayout from "./layouts/root";
-import RegisterSW from '@/components/RegisterSW';
 
 export default function RootLayout({
   children,
@@ -27,7 +26,6 @@ export default function RootLayout({
   return (
     <MainRootLayout>
       {children}
-      <RegisterSW />
     </MainRootLayout>
   );
 }
