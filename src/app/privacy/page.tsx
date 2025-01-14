@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
         </p>
       </section>
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">6. Children's Privacy</h2>
+        <h2 className="text-xl font-semibold mb-2">6. Children&#39;s Privacy</h2>
         <p className="text-gray-700">
           Our blog is not intended for children under the age of 13. We do not knowingly collect personal information from children.
         </p>
