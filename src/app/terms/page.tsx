@@ -42,7 +42,7 @@ const TermsOfService = () => {
       </section>
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">7. Contact Us</h2>
-        <p className="text-gray-700">If you have any questions, please contact us at ewere@gmail.com.</p>
+        <p className="text-gray-700">If you have any questions, please contact us at ewere.diagboya@gmail.com.</p>
       </section>
     </main>
   );
