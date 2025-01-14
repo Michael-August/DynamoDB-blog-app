@@ -7,7 +7,7 @@ const TermsOfService = () => {
       <section >
         <h2 className="text-xl font-semibold mb-2">1. Introduction</h2>
         <p className="text-gray-700">
-          Welcome to [Your Blog Name], operated by [Your Company Name]. These Terms of Service govern your use of our blog and any related services we provide.
+          Welcome to EWERE TECH, Home for all DevOps, AWS and Cloud-native Content. These Terms of Service govern your use of our blog and any related services we provide.
         </p>
       </section>
       <section className="mb-6">
@@ -42,7 +42,7 @@ const TermsOfService = () => {
       </section>
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">7. Contact Us</h2>
-        <p className="text-gray-700">If you have any questions, please contact us at [Your Contact Information].</p>
+        <p className="text-gray-700">If you have any questions, please contact us at ewere@gmail.com.</p>
       </section>
     </main>
   );

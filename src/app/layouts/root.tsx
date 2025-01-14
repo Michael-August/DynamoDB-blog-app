@@ -85,13 +85,9 @@ export default function MainRootLayout({ children,
           >
             <Breadcrumb />
           </motion.div>
-          <div className="flex flex-col md:flex-row gap-5">
-            <div className="md:flex-[8]">
+          <div className="">
+            <div className="">
               {children}
-            </div>
-            <div className='hidden md:flex-[2] md:flex md:flex-col md:gap-4'>
-              <AdComponent adSlot={''} />
-              {pathname !== '/' && <SideBar />}
             </div>
           </div>
         </div>
