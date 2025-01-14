@@ -1,6 +1,7 @@
 import React from 'react'
 import { AiOutlineTwitter, AiFillFacebook, AiFillLinkedin, AiOutlineMedium } from 'react-icons/ai'
 import {motion} from "framer-motion"
+import Link from 'next/link'
 
 const Footer = () => {
     return (
@@ -26,6 +27,10 @@ const Footer = () => {
                 <a className='border border-white rounded-full p-2' href="https://LinkedIn.com/in/ewere" target="_blank" rel="noopener noreferrer">
                     <AiFillLinkedin size={24}  />
                 </a>
+            </div>
+
+            <div className='text-white text-sm mt-5'>
+                <Link href="/terms">Terms of Service</Link> | <Link href="/privacy">Privacy Policy</Link>
             </div>
         </motion.div>
     )
