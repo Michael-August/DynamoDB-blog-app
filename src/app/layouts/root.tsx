@@ -58,14 +58,15 @@ export default function MainRootLayout({ children,
         />
 
         {/* Monetag Ads */}
-        <script
+        {/* Monetag Ads */}
+        <Script
           id='monetag-ads1'
-          // strategy="afterInteractive"
+          strategy="afterInteractive"
           src="/monetag-ad1.js"
         />
-        <script
+        <Script
           id='monetag-ads1'
-          // strategy="afterInteractive"
+          strategy="afterInteractive"
           src="/monetag-ad2.js"
         />
       </head>
