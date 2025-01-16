@@ -23,11 +23,12 @@ export default function SEO({ description, title, image, slug, article }: {descr
         content={`${image ? image : originalImage}`}
         key="ogtitle"
       />
-      {article ? (
+      <meta property="og:type" content="article"/>
+      {/* {article ? (
         <meta property="og:type" content="article" key="ogtype" />
       ) : (
         <meta property="og:type" content="website" key="ogtype" />
-      )}
+      )} */}
       <meta
         property="og:title"
         content={`${title ? title : originalTitle}`}
