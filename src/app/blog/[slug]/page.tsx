@@ -25,6 +25,7 @@ import { BlogPostCard, SocialMediaSharing } from '@/components/Utils';
 import BlogContent from '@/components/BlogContent';
 import { Metadata } from 'next';
 import SideBar from '@/components/SideBar';
+import AdComponent from '@/components/AdsenseSlot';
 
 export interface BlogPostCardProps {
   title: string;
@@ -287,7 +288,7 @@ export default async function Page({ params }: BlogPageProps) {
                             </div>
                         </div>
                         <div className='hidden md:flex-[2] md:flex md:flex-col md:gap-4'>
-                            {/* <AdComponent adSlot={''} /> */}
+                            <AdComponent adSlot={''} />
                             <SideBar />
                         </div>
                     </div>
