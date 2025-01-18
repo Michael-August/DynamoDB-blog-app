@@ -1,21 +1,6 @@
 import Head from "next/head";
 import config from "../../config";
-
-interface SEOProps {
-  description: string;
-  title: string;
-  image?: string;
-  slug: string;
-  article?: boolean;
-}
-
-export default function SEO({
-  description,
-  title,
-  image,
-  slug,
-  article = false,
-}: SEOProps) {
+export default function SEO({ description, title, image, slug, article }: {description: string, title: string, image: any, slug: string, article: any}) {
   const {
     originalTitle,
     originalDescription,
@@ -24,61 +9,64 @@ export default function SEO({
     currentURL,
     originalImage,
   } = config;
-
-  const seoTitle = title ? `${title} | ${originalTitle}` : originalTitle;
-  const seoDescription = description || originalDescription;
-  const seoImage = image || originalImage;
-  const seoUrl = `${currentURL}/${slug}`;
-
   return (
     <Head>
-      {/* General Meta */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta charSet="utf-8" />
-      <title>{seoTitle}</title>
-      <meta name="description" content={seoDescription} />
-      <meta name="image" content={seoImage} />
-
-      {/* Canonical Link */}
-      <link rel="canonical" href={seoUrl} />
-
-      {/* Open Graph Metadata */}
-      <meta property="og:type" content={article ? "article" : "website"} />
-      <meta property="og:title" content={seoTitle} />
-      <meta property="og:description" content={seoDescription} />
-      <meta property="og:image" content={seoImage} />
-      <meta property="og:url" content={seoUrl} />
-      <meta property="og:site_name" content={siteName} />
-
-      {/* Twitter Card Metadata */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:creator" content={twitter} />
-      <meta name="twitter:title" content={seoTitle} />
-      <meta name="twitter:description" content={seoDescription} />
-      <meta name="twitter:image" content={seoImage} />
-
-      {/* Structured Data for Rich Snippets */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": article ? "Article" : "WebPage",
-            headline: title,
-            description: seoDescription,
-            image: seoImage,
-            url: seoUrl,
-            publisher: {
-              "@type": "Organization",
-              name: siteName,
-            },
-            author: {
-              "@type": "Person",
-              name: "Ewere Diagboya", // Optional: Use author's name
-            },
-          }),
-        }}
+      <title>{`${title} | ${originalTitle}`}</title>
+      <meta
+        name="description"
+        content={`${description ? description : originalDescription}`}
       />
+      <meta
+        name="image"
+        content={`${image ? image : originalImage}`}
+        key="ogtitle"
+      />
+      <meta property="og:type" content="article"/>
+      {/* {article ? (
+        <meta property="og:type" content="article" key="ogtype" />
+      ) : (
+        <meta property="og:type" content="website" key="ogtype" />
+      )} */}
+      <meta
+        property="og:title"
+        content={`${title ? title : originalTitle}`}
+        key="ogtitle"
+      />
+      <meta
+        property="og:description"
+        content={`${description ? description : originalDescription}`}
+        key="ogdesc"
+      />
+      <meta
+        property="twitter:card"
+        content="summary_large_image"
+        key="twcard"
+      />
+      <meta name="twitter:creator" content={twitter} key="twhandle" />
+      <meta
+        name="twitter:title"
+        content={`${title ? title : originalTitle}`}
+        key="twtitle"
+      />
+      <meta
+        name="twitter:description"
+        content={`${description ? description : originalDescription}`}
+        key="twdescription"
+      />
+      <meta
+        name="twitter:image"
+        content={`${image ? image : originalImage}`}
+        key="twimage"
+      />
+      <meta property="og:url" content={`${currentURL}/${slug}`} key="ogurl" />
+      <meta
+        property="og:image"
+        content={`${image ? image : originalImage}`}
+        key="ogimage"
+      />
+      <meta property="og:site_name" content={siteName} key="ogsitename" />
     </Head>
   );
 }
