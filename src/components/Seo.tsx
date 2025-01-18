@@ -19,6 +19,7 @@ export default function SEO({ description, title, image, slug, article }: {descr
         name="description"
         content={`${description ? description : originalDescription}`}
       />
+      <meta name="robots" content="index" />
       <meta
         name="image"
         content={`${image ? image : originalImage}`}

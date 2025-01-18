@@ -179,7 +179,7 @@ export default async function Page({ params }: BlogPageProps) {
     return (
         <>
             {/* <AnimatePresence> */}
-                <SEO description={blog?.content.slice(0, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} />
+                <SEO description={blog?.content.slice(4, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} />
                 {/* {loading ? 
                     <BlogSkeletonLoader /> : */}
                     <div className='flex flex-col md:flex-row gap-5'>
