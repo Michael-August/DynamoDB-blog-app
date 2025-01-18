@@ -19,6 +19,7 @@ import authorImage from "@/public/images/author-image.jpg";
 import blogImg from "@/public/images/blogBodyImg.jpg";
 import image2 from "@/public/images/image-2.jpg";
 import { useParams } from "next/navigation";
+import AdComponent from "@/components/AdsenseSlot";
 
 export interface BlogPostCardProps {
   title: string;
@@ -167,8 +168,9 @@ const Page: React.FC<BlogPageProps> = ({ params }) => {
                 </div>
             </div>
             </div>
-            <div className="hidden md:flex-[2] md:flex md:flex-col md:gap-4">
-            <SideBar />
+                <div className="hidden md:flex-[2] md:flex md:flex-col md:gap-4">
+                    <AdComponent adSlot={""} />
+                <SideBar />
             </div>
         </div>
         </>
