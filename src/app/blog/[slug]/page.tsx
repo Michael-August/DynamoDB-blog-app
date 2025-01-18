@@ -170,9 +170,9 @@ const Page: React.FC<BlogPageProps> = ({ params }) => {
             </div>
                 <div className="hidden md:flex-[2] md:flex md:flex-col md:gap-4">
                     <AdComponent adSlot={""} />
-                <SideBar />
+                    <SideBar />
+                </div>
             </div>
-        </div>
         </>
     );
 };
