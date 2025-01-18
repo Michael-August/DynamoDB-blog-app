@@ -9,6 +9,7 @@ export default function SEO({ description, title, image, slug, article }: {descr
     currentURL,
     originalImage,
   } = config;
+  console.log("title", `${title} | ${originalTitle}`);
   return (
     <Head>
       <meta name="viewport" content="width=device-width, initial-scale=1" />

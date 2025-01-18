@@ -1,5 +1,5 @@
 export default {
-    originalTitle: "Na Moje Wyspie",
+    originalTitle: "Home for all DevOps, AWS and Cloud-native Content",
     currentURL: "https://ewere.techp",
     originalImage: "https://i.ibb.co/NtDBtQd/image-3.jpg",
     author: {
