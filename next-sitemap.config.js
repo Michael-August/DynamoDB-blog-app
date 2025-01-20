@@ -6,7 +6,7 @@ const fetchDynamicRoutes = async () => {
 	const posts = await response.json();
 
 	// Return the dynamic paths (e.g., blog slugs)
-	return posts.map((post) => `/blog/${post.slug}`);
+	return posts?.posts.map((post) => `/blog/${post.slug}`);
 };
 
 const config = {
