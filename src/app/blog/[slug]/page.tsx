@@ -42,7 +42,12 @@ interface BlogPageProps {
 async function fetchBlog(slug: string): Promise<any | null> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     try {
-        const res = await fetch(`${baseUrl}/apis/articles/${slug}`);
+        const res = await fetch(`${baseUrl}/apis/articles/${slug}`, {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-store', // Prevent caching
+            },
+        });
         if (!res.ok) return null;
 
         const { article } = await res.json();
