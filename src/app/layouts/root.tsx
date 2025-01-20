@@ -28,7 +28,6 @@ export default function MainRootLayout({ children,
   return (
     <html lang="en">
       <head>
-        <meta name="monetag" content="3ffe5dbaabc8145ffa0719aade5c2483" />
         {/* Google tag (gtag.js) */}
         <Script
           async
@@ -55,19 +54,6 @@ export default function MainRootLayout({ children,
               });
             `,
           }}
-        />
-
-        {/* Monetag Ads */}
-        {/* Monetag Ads */}
-        <Script
-          id='monetag-ads1'
-          strategy="afterInteractive"
-          src="/monetag-ad1.js"
-        />
-        <Script
-          id='monetag-ads1'
-          strategy="afterInteractive"
-          src="/monetag-ad2.js"
         />
       </head>
       <body className="container mx-auto bg-[#f7fbff]">

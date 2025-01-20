@@ -27,6 +27,7 @@ export async function POST(req: Request) {
                 id,
                 email,
                 fullName,
+                status: "subscribed",
                 subscribedAt: new Date().toISOString(),
             },
         };
@@ -137,7 +138,7 @@ export async function POST(req: Request) {
                     Data: "Subscription Confirmation",
                 },
             },
-            Source: process.env.SES_VERIFIED_EMAIL,
+            Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
         };
 
         await SESClientConfig.send(new SendEmailCommand(emailParams));
