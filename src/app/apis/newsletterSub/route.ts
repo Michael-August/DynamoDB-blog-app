@@ -141,7 +141,7 @@ export async function POST(req: Request) {
             Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
         };
 
-        await SESClientConfig.send(new SendEmailCommand(emailParams));
+        // await SESClientConfig.send(new SendEmailCommand(emailParams));
 
         return NextResponse.json({
             article: params.Item,

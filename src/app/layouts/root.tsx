@@ -11,13 +11,14 @@ import Script from 'next/script';
 
 import 'react-toastify/dist/ReactToastify.css';
 import AdComponent from '@/components/AdsenseSlot';
+import authorImage from "@/public/images/author-image.jpg"
 
 import {motion} from "framer-motion"
 import SideBar from '@/components/SideBar';
 import { usePathname } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: "Home for all DevOps, AWS and Cloud-native Content",
+  title: "Home for all DevOps, AWS and Cloud-native Content",
 };
 
 export default function MainRootLayout({ children,
@@ -28,6 +29,28 @@ export default function MainRootLayout({ children,
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="description"
+          content="Home for all DevOps, AWS and Cloud-native Content"
+        />
+        <meta name="robots" content="index" />
+        <meta
+          name="image"
+          content={`${authorImage}`}
+          key="ogtitle"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content={`ewere.tech`}
+          key="ogtitle"
+        />
+        <meta
+          property="og:description"
+          content={`"Home for all DevOps, AWS and Cloud-native Content"`}
+          key="ogdesc"
+        />
         {/* Google tag (gtag.js) */}
         <Script
           async
