@@ -97,6 +97,7 @@ export async function POST(req: Request) {
                                     .content {
                                         padding: 20px 10px;
                                         text-align: center;
+                                        text-color: #fff;
                                     }
                                     .content p {
                                         font-size: 16px;
@@ -145,7 +146,7 @@ export async function POST(req: Request) {
                                         </a>
                                     </div>
                                     <div class="footer">
-                                        <p>&copy; 2025 Your Company. All Rights Reserved.</p>
+                                        <p>&copy; 2025 Ewere.tech. All Rights Reserved.</p>
                                     </div>
                                     </div>
                                 </body>
@@ -161,7 +162,7 @@ export async function POST(req: Request) {
             Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
         };
 
-        // await SESClientConfig.send(new SendEmailCommand(emailParams));
+        await SESClientConfig.send(new SendEmailCommand(emailParams));
 
         return NextResponse.json({
             message: 'Newletter subscription succesful',
