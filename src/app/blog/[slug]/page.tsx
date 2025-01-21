@@ -276,7 +276,7 @@ export default async function Page({ params }: BlogPageProps) {
                                             <Image width={200} height={100} src={image2} className="rounded-full w-20" alt="author Image" />
                                         </div>
                                         <span className='font-semibold text-base md:text-xl'>Written by Ewere Diagboya</span>
-                                        <span className='text-xs md:text-sm'>First AWS Hero in Africa, DevOps Enginner</span>
+                                        <span className='text-xs md:text-sm'>First AWS Hero in Africa, DevOps Engineer</span>
                                     </div>
                                     <div className="socials ">
                                         <SocialMediaSharing slug={`${blog?.slug}`} title={blog?.title} />
