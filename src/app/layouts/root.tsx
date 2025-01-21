@@ -37,7 +37,7 @@ export default function MainRootLayout({ children,
         <meta name="robots" content="index" />
         <meta
           name="image"
-          content={`${authorImage}`}
+          content={`https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images`}
           key="ogimage"
         />
         <meta property="og:type" content="website" />
