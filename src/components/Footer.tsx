@@ -31,7 +31,7 @@ const Footer = () => {
             const data = await response.json();
 
             if (response.ok) {
-                toast.success("Subscription successful! Check your email.");
+                toast.success("Subscription successful!.");
                 setFullName("");
                 setEmail("");
             } else {
