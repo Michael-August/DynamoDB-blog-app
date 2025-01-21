@@ -1,5 +1,5 @@
 import { dynamoDb } from "@/lib/dynamo";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,26 @@ export async function POST(req: Request) {
             return new Response(JSON.stringify({ message: "Full name and email are required." }), {
                 status: 400,
             });
+        }
+
+        // Check for duplicates
+        const queryParams = {
+            TableName: "Subscribers",
+            IndexName: "email-index", // Replace with the correct index name if using a secondary index
+            KeyConditionExpression: "email = :email",
+            ExpressionAttributeValues: {
+                ":email": email,
+            },
+        };
+
+        const queryCommand = new QueryCommand(queryParams);
+        const queryResult = await dynamoDb.send(queryCommand);
+
+        if (queryResult.Items && queryResult.Items.length > 0) {
+            return NextResponse.json(
+                { message: "This email is already subscribed.", success: false },
+                { status: 409 }
+            );
         }
 
         // Save subscriber to database
@@ -144,7 +164,6 @@ export async function POST(req: Request) {
         // await SESClientConfig.send(new SendEmailCommand(emailParams));
 
         return NextResponse.json({
-            article: params.Item,
             message: 'Newletter subscription succesful',
             success: true,
             status: 201,
