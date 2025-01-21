@@ -38,7 +38,7 @@ export default function MainRootLayout({ children,
         <meta
           name="image"
           content={`${authorImage}`}
-          key="ogtitle"
+          key="ogimage"
         />
         <meta property="og:type" content="website" />
         <meta
