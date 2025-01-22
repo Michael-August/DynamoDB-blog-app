@@ -46,7 +46,7 @@ const SideBar = () => {
 
     return (
         <div>
-            {filteredArticles?.map((article: any) => (
+            {filteredArticles.slice(0, 5)?.map((article: any) => (
                 <Link key={article?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${article?.slug}`}>
                     <img
                         src={article?.imageUrl}
