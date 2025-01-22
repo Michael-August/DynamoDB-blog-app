@@ -293,7 +293,7 @@ export default async function Page({ params }: BlogPageProps) {
                             </div>
                         </div>
                         <div className='hidden md:flex-[2] md:flex md:flex-col md:gap-4'>
-                            {/* <AdComponent adSlot={''} /> */}
+                            <AdComponent adSlot={''} />
                             <SideBar />
                         </div>
                     </div>
