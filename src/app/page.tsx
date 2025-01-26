@@ -122,7 +122,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
               {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
                   <BlogCard blog={article} key={article.id} />
               ))}
@@ -130,11 +130,11 @@ export default function Home() {
         }
       </motion.div>
 
-      <Pagination
+      {/* <Pagination
         page={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
-      />
+      /> */}
     </div>
   );
 }
