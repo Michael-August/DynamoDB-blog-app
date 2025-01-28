@@ -97,7 +97,7 @@ export async function POST(req: Request) {
                                     .content {
                                         padding: 20px 10px;
                                         text-align: center;
-                                        text-color: #fff;
+                                        color: #fff;
                                     }
                                     .content p {
                                         font-size: 16px;
