@@ -92,7 +92,7 @@ const NavBar = () => {
                     </div>
                     <h3 className="text-2xl font-semibold">Subscribe to our Newsletter</h3>
                     <p className="text-gray-400 mt-2">Stay updated with the latest news and articles.</p>
-                    <Subscribe fromNavBar={true} />
+                    <Subscribe setModal={setSubModalOpen} fromNavBar={true} />
                 </div>
             </div>}
         </>
