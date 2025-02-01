@@ -10,8 +10,7 @@ import { GoogleAnalytics } from 'nextjs-google-analytics';
 import Script from 'next/script';
 
 import 'react-toastify/dist/ReactToastify.css';
-import AdComponent from '@/components/AdsenseSlot';
-import authorImage from "@/public/images/author-image.jpg"
+import { Analytics } from "@vercel/analytics/react"
 
 import {motion} from "framer-motion"
 import SideBar from '@/components/SideBar';
@@ -81,6 +80,7 @@ export default function MainRootLayout({ children,
       </head>
       <body className="container mx-auto bg-[#f7fbff]">
         <GoogleAnalytics gaMeasurementId="G-W7QZT1RWGW" trackPageViews />
+        <Analytics />
         <ToastContainer
             position="top-center"
             closeButton={true}
