@@ -32,6 +32,7 @@ async function fetchBlog(slug: string): Promise<any | null> {
     try {
         const res = await fetch(`${baseUrl}/apis/articles/${slug}`, {
             method: 'GET',
+            cache: 'no-store',
             headers: {
                 'Cache-Control': 'no-store', // Prevent caching
             },
@@ -50,7 +51,8 @@ async function fetchSimilarArticles(blogId: string, tags: string[]): Promise<any
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     try {
         const res = await fetch(
-            `${baseUrl}/apis/similar?blogId=${blogId}&tags=${tags.join(',')}`
+            `${baseUrl}/apis/similar?blogId=${blogId}&tags=${tags.join(',')}`,
+            { cache: 'no-store' }
         );
         const { posts, success } = await res.json();
         return success ? posts : [];
@@ -95,7 +97,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
                     url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
                     width: 1200,
                     height: 630,
-                    alt: title,
+                    alt: imageUrl,
                 },
             ],
         },

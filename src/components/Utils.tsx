@@ -3,7 +3,7 @@
 import { BlogPostCardProps } from "@/app/blog/[slug]/page";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton } from "react-share";
+import { FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton, TwitterIcon, TwitterShareButton, WhatsappIcon, WhatsappShareButton } from "react-share";
 
 export const BlogPostCard: React.FC<BlogPostCardProps> = ({
   title,
@@ -59,6 +59,9 @@ export const SocialMediaSharing = ({ slug, title }: { slug: string; title: strin
                 <LinkedinShareButton url={url}>
                         <LinkedinIcon size={30} round />
                 </LinkedinShareButton>
+                <WhatsappShareButton url={url}>
+                  <WhatsappIcon size={30} round />
+                </WhatsappShareButton>
             </div>
         </div>
     );
