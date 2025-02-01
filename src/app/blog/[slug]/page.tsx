@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import moment from 'moment';
 import authorImage from "@/public/images/author-image.jpg"
 import React from 'react'
@@ -30,7 +32,7 @@ interface BlogPageProps {
 async function fetchBlog(slug: string): Promise<any | null> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     try {
-        const res = await fetch(`${baseUrl}/apis/articles/${slug}`, {
+        const res = await fetch(`${baseUrl}/apis/articles/${slug}?_=${Date.now()}`, {
             method: 'GET',
             cache: 'no-store',
             headers: {
@@ -68,7 +70,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   // Fetch blog details
-  const response = await fetch(`${baseUrl}/apis/articles/${params.slug}`);
+    const response = await fetch(`${baseUrl}/apis/articles/${params.slug}?_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {cache: 'no-store'}
+    });
   const blog = await response.json();
 
   if (!blog?.article) {

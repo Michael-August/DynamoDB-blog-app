@@ -32,8 +32,6 @@ const Subscribe = ({fromNavBar, setModal}: {fromNavBar: boolean, setModal?: Disp
 
             const data = await response.json();
 
-            console.log(data)
-
             if (response.ok) {
                 toast.success("Subscription successful!.");
                 setFullName("");

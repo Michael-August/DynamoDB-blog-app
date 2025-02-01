@@ -66,7 +66,6 @@ const Page = () => {
       };
 
     reader.readAsDataURL(file);
-    console.log(e.target.files)
       setValue('image', e.target.files);
   }
 

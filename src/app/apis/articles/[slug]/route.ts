@@ -62,7 +62,6 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
 
     if (formData.get("imageUrl")) {
       imageUrl = formData.get("imageUrl")
-      console.log(imageUrl)
     } else {
       const file = formData.get('image') as File;
       if (file) {
@@ -95,8 +94,6 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
       },
       ReturnValues: ReturnValue.ALL_NEW,
     };
-
-    console.log(params)
 
     const command = new UpdateCommand(params);
     const data = await dynamoDb.send(command);

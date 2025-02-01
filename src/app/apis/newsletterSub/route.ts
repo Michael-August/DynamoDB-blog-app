@@ -170,7 +170,6 @@ export async function POST(req: Request) {
             status: 201,
         }, { status: 201 });
     } catch (error: unknown) {
-        console.log(error)
         if (error instanceof Error) {
             return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
         } else {
