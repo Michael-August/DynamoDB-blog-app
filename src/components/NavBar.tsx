@@ -85,7 +85,7 @@ const NavBar = () => {
                     </div>
                 )} */}
             </div>
-            {subModalOpen && <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-80 z-40">
+            {subModalOpen && <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-80 z-[60]">
                 <div className="modal-card bg-white p-4 rounded-lg flex flex-col gap-4">
                     <div className='flex justify-end' onClick={() => setSubModalOpen(false)}>
                         <span className='text-red-700 cursor-pointer font-bold'>X</span>
