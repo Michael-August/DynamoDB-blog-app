@@ -85,6 +85,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title,
       description: content.slice(0, 150),
       url: `${baseUrl}/blog/${slug}`,
+      type: "article",
       images: [
         {
           url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
