@@ -76,32 +76,36 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
-  const { title, content, imageUrl, slug } = blog.article;
+  const { title, content, imageUrl, slug, tags, createdAt } = blog.article;
 
-  return {
-    title,
-    description: content.slice(0, 150), // Truncate to avoid overly long descriptions
-    openGraph: {
-      title,
-      description: content.slice(0, 150),
-      url: `${baseUrl}/blog/${slug}`,
-      type: "article",
-      images: [
-        {
-          url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
-          width: 1200,
-          height: 630,
-          alt: title,
+    return {
+        title,
+        description: content.slice(3, 150),
+        keywords: tags || [],
+        alternates: { canonical: `${baseUrl}/blog/${slug}` },
+        robots: { index: true, follow: true },
+        authors: [{ name: "Ewere Diagboya"  }],
+        openGraph: {
+            title,
+            description: content.slice(3, 150),
+            url: `${baseUrl}/blog/${slug}`,
+            type: "article",
+            images: [
+                {
+                    url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
+                    width: 1200,
+                    height: 630,
+                    alt: title,
+                },
+            ],
         },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: content.slice(0, 150),
-      images: [imageUrl || `${baseUrl}/default-image.jpg`],
-    },
-  };
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description: content.slice(3, 150),
+            images: [imageUrl || `${baseUrl}/default-image.jpg`],
+        },
+    };
 }
 
 export default async function Page({ params }: BlogPageProps) {
