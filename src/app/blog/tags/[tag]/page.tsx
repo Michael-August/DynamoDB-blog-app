@@ -2,6 +2,7 @@
 
 import BlogCard from "@/components/BlogCard";
 import axios from "axios";
+import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -42,11 +43,16 @@ const TagPage = ({params}: { params: { tag: string } }) => {
                 <div className="mx-auto flex h-64 w-full items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-black" />
                 </div> :
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
-                    {articles.map((article: any) => (
-                        <BlogCard blog={article} key={article?.id} />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+                    {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
+                        <BlogCard blog={article} key={article.id} />
                     ))}
-                </div>
+                </motion.div>
             }
         </div>
     );
