@@ -1,9 +1,9 @@
-export const dynamic = 'force-dynamic';
-
 import moment from 'moment';
 import authorImage from "@/public/images/author-image.jpg"
 import React from 'react'
 import Image from 'next/image';
+
+import dynamic from 'next/dynamic';
 
 import blogImg from "@/public/images/blogBodyImg.jpg"
 import ArticleTags from '@/components/ArticleTags';
@@ -12,10 +12,11 @@ import image2 from "@/public/images/image-2.jpg"
 import SEO from '@/components/Seo';
 import { notFound } from 'next/navigation';
 import { BlogPostCard, SocialMediaSharing } from '@/components/Utils';
-import BlogContent from '@/components/BlogContent';
 import { Metadata } from 'next';
 import SideBar from '@/components/SideBar';
 import AdComponent from '@/components/AdsenseSlot';
+
+const BlogContent = dynamic(() => import('@/components/BlogContent'), { ssr: false });
 
 export interface BlogPostCardProps {
   title: string;

@@ -9,8 +9,11 @@ import { UploadApiResponse } from "cloudinary";
 export const runtime = 'nodejs';
 
 function generateSlug(title: string, id: string) {
+  // Remove special characters except for hyphens
+  const cleanTitle = title.replace(/[^\w\s-]/g, '');
+  
   // Replace spaces with hyphens and convert to lowercase
-  const slugTitle = title.replace(/\s+/g, '-').toLowerCase();
+  const slugTitle = cleanTitle.replace(/\s+/g, '-').toLowerCase();
   
   // Extract the first 6 characters of the ID
   const slugId = id.toString().slice(0, 6);
