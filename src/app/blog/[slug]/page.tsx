@@ -98,6 +98,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             description: content.slice(3, 150),
             url: `${baseUrl}/blog/${slug}`,
             type: "article",
+            publishedTime: moment(createdAt).format("HH:mm:ss"),
             images: [
                 {
                     url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
@@ -128,7 +129,7 @@ export default async function Page({ params }: BlogPageProps) {
     
     return (
         <>
-            <SEO description={blog?.content.slice(4, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} />
+            {/* <SEO description={blog?.content.slice(4, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} /> */}
             <div className='flex flex-col md:flex-row gap-5'>
                 
                 <div className="md:flex-[8]">
