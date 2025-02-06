@@ -16,10 +16,6 @@ import {motion} from "framer-motion"
 import SideBar from '@/components/SideBar';
 import { usePathname } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: "Home for all DevOps, AWS and Cloud-native Content",
-};
-
 export default function MainRootLayout({ children,
 }: Readonly<{
   children: React.ReactNode;
@@ -29,27 +25,6 @@ export default function MainRootLayout({ children,
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta
-          name="description"
-          content="Home for all DevOps, AWS and Cloud-native Content"
-        />
-        <meta name="robots" content="index" />
-        <meta
-          name="image"
-          content={`https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images`}
-          key="ogimage"
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:title"
-          content={`ewere.tech`}
-          key="ogtitle"
-        />
-        <meta
-          property="og:description"
-          content={`"Home for all DevOps, AWS and Cloud-native Content"`}
-          key="ogdesc"
-        />
         {/* Google tag (gtag.js) */}
         <Script
           async
