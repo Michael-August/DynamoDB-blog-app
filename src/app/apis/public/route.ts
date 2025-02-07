@@ -59,44 +59,66 @@ export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest) {
   try {
-    const search = req.nextUrl.searchParams.get('search');
+    const search = req.nextUrl.searchParams.get("search");
 
-    const params: any = {
-      TableName: 'Blog',
-      FilterExpression: '#status = :status',
+    let params: any = {
+      TableName: "Blog",
+      FilterExpression: "#status = :status",
       ExpressionAttributeNames: {
-        '#status': 'status', // Map reserved keyword 'status' to '#status'
+        "#status": "status", // Map reserved keyword 'status' to '#status'
       },
       ExpressionAttributeValues: {
-        ':status': 'published',
+        ":status": "published",
       } as { [key: string]: any },
     };
 
     if (search) {
-      params.FilterExpression += ' and (contains(title, :search) or contains(content, :search))';
-      params.ExpressionAttributeValues[':search'] = search;
+      params.FilterExpression +=
+        " and (contains(title, :search) or contains(content, :search))";
+      params.ExpressionAttributeValues[":search"] = search;
     }
 
-    // Fetch all data in a single query
-    const command = new ScanCommand(params);
-    const data = await dynamoDb.send(command);
+    let allItems: any[] = [];
+    let lastEvaluatedKey = undefined;
 
-    // Sort the data by date (assuming there is a 'date' field in ISO format)
-    // const sortedData = data.Items?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    do {
+      const command: ScanCommand = new ScanCommand({
+        ...params,
+        ExclusiveStartKey: lastEvaluatedKey, // Continue from the last batch
+      });
 
-    return NextResponse.json({
-      posts: data.Items,
-      total: data.Items?.length || 0,
-      message: "Fetch successful",
-      success: true,
-      status: 200,
-    }, { status: 200 });
+      const data = await dynamoDb.send(command);
+
+      if (data.Items) {
+        allItems = [...allItems, ...data.Items]; // Collect all fetched items
+      }
+
+      lastEvaluatedKey = data.LastEvaluatedKey; // Check if more data exists
+    } while (lastEvaluatedKey); // Continue scanning until all data is retrieved
+
+    return NextResponse.json(
+      {
+        posts: allItems,
+        total: allItems.length || 0,
+        message: "Fetch successful",
+        success: true,
+        status: 200,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
+      return NextResponse.json(
+        { error: error.message, success: false, status: 500 },
+        { status: 500 }
+      );
     } else {
-      return NextResponse.json({ error: 'An unknown error occurred', success: false, status: 500 }, { status: 500 });
+      return NextResponse.json(
+        { error: "An unknown error occurred", success: false, status: 500 },
+        { status: 500 }
+      );
     }
   }
 }
+
 
