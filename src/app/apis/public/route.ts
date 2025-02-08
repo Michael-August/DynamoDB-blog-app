@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
   try {
     const search = req.nextUrl.searchParams.get("search");
 
-    let params: any = {
+    const params: any = {
       TableName: "Blog",
       FilterExpression: "#status = :status",
       ExpressionAttributeNames: {
