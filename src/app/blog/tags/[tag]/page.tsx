@@ -1,60 +1,59 @@
-"use client"
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import React from "react";
 
-import BlogCard from "@/components/BlogCard";
-import axios from "axios";
-import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { AiFillRead } from "react-icons/ai";
-import { toast } from "react-toastify";
+const Tags = dynamic(() => import('@/components/Tag'), { ssr: false })
 
-const TagPage = ({params}: { params: { tag: string } }) => {
-    const [articles, setArticles] = useState([]);
+// Dynamic metadata for SEO
+export async function generateMetadata({ params }: { params: { tag: string } }): Promise<Metadata> {
+    // Replace this with your actual base URL logic
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     
-    const [loading, setLoading] = useState(true);
-
     const decodedTag = params.tag ? decodeURIComponent(params.tag as string) : "";
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`/apis/tags?tag=${decodedTag}`);
-                setArticles(response.data?.posts);
-            } catch (error: any) {
-                toast.error(`${error.message}`)
-            } finally {
-                setLoading(false);
-            }
-        };
-      
-        if (decodedTag) {
-            fetchData()
-        }
-    }, [decodedTag]);
+    return {
+        title: decodedTag,
+        description: 'Home for all DevOps, AWS and Cloud-native Content',
+        keywords: [decodedTag],
+        alternates: { canonical: `${baseUrl}/blog/tags/${decodedTag}` },
+        robots: { index: true, follow: true },
+        authors: [{ name: "Ewere Diagboya"  }],
+        openGraph: {
+            title: decodedTag,
+            description: "Home for all DevOps, AWS and Cloud-native Content",
+            url: `${baseUrl}/blog/tags/${decodedTag}`,
+            type: "website",
+            images: [
+                {
+                    url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+                    width: 1200,
+                    height: 630,
+                    alt: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: decodedTag,
+            description: "Home for all DevOps, AWS and Cloud-native Content",
+            images: [
+                {
+                    url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+                    width: 1200,
+                    height: 630,
+                    alt: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+                },
+            ],
+        },
+    };
+}
+
+const TagPage = () => {
 
     return (
-        <div className="mb-10">
-            <div className="top flex items-center gap-4 text-black mb-10">
-                <AiFillRead className="font-semibold text-3xl text-slate-800" />
-                <span className="font-semibold text-3xl">Articles with tag { decodedTag }</span>
-            </div>
-            {loading ?
-                <div className="mx-auto flex h-64 w-full items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-black" />
-                </div> :
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-                    {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
-                        <BlogCard blog={article} key={article.id} />
-                    ))}
-                </motion.div>
-            }
-        </div>
+        <>
+            <Tags />
+        </>
     );
 };
 

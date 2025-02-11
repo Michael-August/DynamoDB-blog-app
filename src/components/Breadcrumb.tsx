@@ -12,10 +12,13 @@ const Breadcrumb = () => {
   const pathSegments = pathname.split('/').filter(segment => segment);
 
   // Skip specific segments like "blog"
-  const breadcrumbItems = pathSegments.filter(segment => segment !== 'blog').map((segment, index) => {
+  const breadcrumbItems = pathSegments.filter(segment => segment !== 'blog' && segment !== 'tags').map((segment, index) => {
     const path = '/' + pathSegments.slice(0, index + 1).join('/');
     return { label: segment.replace(/-/g, ' '), path };
   });
+
+  // Check if 'tag' exists in the pathname
+  const hasTag = pathSegments.includes('tags') && pathSegments.includes('blog');
 
   return (
     <nav aria-label="breadcrumb">
@@ -32,10 +35,10 @@ const Breadcrumb = () => {
           <li className='capitalize' key={index} style={breadcrumbItemStyle}>
             {index !== breadcrumbItems.length - 1 ? (
               <Link href={item.path} style={linkStyle}>
-                {item.label.slice(0, -7)}
+                {hasTag ? item.label : item.label.slice(0, -7)}
               </Link>
             ) : (
-              <span style={activeStyle}>{item.label !== "about" ? item.label.slice(0, -7) : item.label}</span>
+              <span style={activeStyle}>{hasTag || item.label === "about" ? item.label : item.label.slice(0, -7)}</span>
             )}
           </li>
         ))}

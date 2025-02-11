@@ -20,7 +20,7 @@ export const AwardCards = ({
       {items.map((item) => (
         <Link
           href={item?.link}
-          key={item?.link}
+          key={item?.title}
           target="_blank"
           className="relative group  block p-2 h-full w-full transition-all hover:scale-110"
         >
