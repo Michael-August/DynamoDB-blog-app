@@ -22,6 +22,7 @@ export interface BlogPostCardProps {
   title: string;
   slug?: string;
   imageUrl: string;
+  imageFileName?: string;
   tags: string[];
 }
 
@@ -84,7 +85,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
-  const { title, content, imageUrl, slug, tags, createdAt } = blog.article;
+  const { title, content, imageUrl, imageFileName, slug, tags, createdAt } = blog.article;
 
     return {
         title,
@@ -101,10 +102,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             publishedTime: moment(createdAt).format("HH:mm:ss"),
             images: [
                 {
-                    url: imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
+                    url: imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imageFileName}` : imageUrl || `${baseUrl}/default-image.jpg`, // Default image fallback
                     width: 1200,
                     height: 630,
-                    alt: imageUrl,
+                    alt: imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imageFileName}` : imageUrl,
                 },
             ],
         },
@@ -112,7 +113,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             card: 'summary_large_image',
             title,
             description: content.slice(3, 150),
-            images: [imageUrl || `${baseUrl}/default-image.jpg`],
+            images: [imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imageFileName}` : imageUrl || `${baseUrl}/default-image.jpg`],
         },
     };
 }
@@ -176,7 +177,7 @@ export default async function Page({ params }: BlogPageProps) {
                     <div
                         className="my-4 w-full h-[30rem] relative">
                         <Image
-                            src={blog?.imageUrl || blogImg}
+                            src={blog?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${blog?.imageFileName}` : blog?.imageUrl || blogImg}
                             alt="blog img"
                             className="rounded-3xl object-cover"
                             fill
@@ -203,7 +204,7 @@ export default async function Page({ params }: BlogPageProps) {
                         {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
                                 {similarArticles?.map((article: any) => (
-                                    <BlogPostCard key={article.id} title={article.title} imageUrl={article.imageUrl} tags={article.tags} slug={article.slug} />
+                                    <BlogPostCard key={article.id} title={article.title} imageFileName={article?.imageFileName} imageUrl={article.imageUrl} tags={article.tags} slug={article.slug} />
                                 ))}
                             </div>
                         }

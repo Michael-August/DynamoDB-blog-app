@@ -13,9 +13,19 @@ import { FaEllipsisV } from 'react-icons/fa';
 import { Loader2 } from 'lucide-react';
 
 import {motion} from "framer-motion"
-
+interface Article {
+  id: string;
+  slug: string;
+  title: string;
+  createdAt: string;
+  imageUrl?: string;
+  imageFileName?: string;
+  status: "published" | "unpublished";
+}
+  
 const Page = () => {
-  const [articles, setArticles] = useState([]);
+  
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [openActions, setOpenActions] = useState<number | null>(null)
@@ -115,7 +125,7 @@ const Page = () => {
         {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any, index:number) => (
           <div key={article.id} onClick={() => { if (openActions === index) setOpenActions(null) }} className="max-w-xs w-full group/card">
             <div
-              style={{ backgroundImage: `url(${article.imageUrl})`, backgroundSize: 'cover' }}
+              style={{ backgroundImage: `url(${article?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${article?.imageFileName}` : article?.imageUrl})`, backgroundSize: 'cover' }}
               className={`
                 cursor-pointer overflow-hidden relative card h-96 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4
               `}

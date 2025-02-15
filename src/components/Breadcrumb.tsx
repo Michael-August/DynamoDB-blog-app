@@ -32,7 +32,7 @@ const Breadcrumb = () => {
           <ChevronRight />
         </li>
         {breadcrumbItems.map((item, index) => (
-          <li className='capitalize' key={index} style={breadcrumbItemStyle}>
+          <li className='' key={index} style={breadcrumbItemStyle}>
             {index !== breadcrumbItems.length - 1 ? (
               <Link href={item.path} style={linkStyle}>
                 {hasTag ? item.label : item.label.slice(0, -7)}

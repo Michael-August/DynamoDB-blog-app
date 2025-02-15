@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ReturnValue } from "@aws-sdk/client-dynamodb";
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3ClientConfig } from "@/lib/s3bucket.config";
 
 // GET Request
 export async function GET(req: Request, {params}: { params: { slug: string } }) {
@@ -58,40 +60,53 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const id = formData.get('id')
     const tags = JSON.parse(formData.get("tags") as string)
 
-    let imageUrl;
+    let imageUrl = undefined;
+    let imageFileName = undefined;
 
     if (formData.get("imageUrl")) {
       imageUrl = formData.get("imageUrl")
+    } else if (formData.get("imageFileName")) {
+      imageFileName = formData.get("imageFileName")
     } else {
       const file = formData.get('image') as File;
       if (file) {
         const fileBuffer = await file.arrayBuffer();
-        const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-          cloudinary.uploader
-            .upload_stream(
-              { resource_type: 'auto', folder: "blogImages" },
-              (error, result) => {
-                if (error || !result) reject(error);
-                else resolve(result);
-              },
-            )
-            .end(Buffer.from(fileBuffer));
+        const fileName = file.name
+
+        // Upload file to S3
+        const uploadParams = new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: fileName,
+          Body: Buffer.from(fileBuffer),
+          ContentType: file.type,
         });
-        imageUrl = result.secure_url;
+
+        await S3ClientConfig.send(uploadParams);
+        imageFileName = fileName
       }
+    }
+
+    const updateExpressionParts = ["#title = :title", "content = :content", "tags = :tags"];
+    const expressionAttributeValues: Record<string, any> = {
+      ":title": title,
+      ":content": content,
+      ":tags": tags,
+    };
+
+    if (imageUrl) {
+      updateExpressionParts.push("imageUrl = :imageUrl");
+      expressionAttributeValues[":imageUrl"] = imageUrl;
+    } else {
+      updateExpressionParts.push("imageFileName = :imageFileName");
+      expressionAttributeValues[":imageFileName"] = imageFileName;
     }
 
     const params = {
       TableName: 'Blog',
       Key: { id: id },
-      UpdateExpression: 'set #title = :title, content = :content, tags =:tags, imageUrl = :imageUrl',
+      UpdateExpression: `SET ${updateExpressionParts.join(", ")}`,
       ExpressionAttributeNames: { '#title': 'title' },
-      ExpressionAttributeValues: {
-        ':title': title,
-        ':content': content,
-        ':tags': tags,
-        ':imageUrl': imageUrl,
-      },
+      ExpressionAttributeValues: expressionAttributeValues,
       ReturnValues: ReturnValue.ALL_NEW,
     };
 

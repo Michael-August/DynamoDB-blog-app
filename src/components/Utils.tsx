@@ -9,12 +9,13 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({
   title,
   slug,
   imageUrl,
+  imageFileName,
   tags,
 }) => {
   return (
     <Link className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${slug}`}>
       <img
-        src={imageUrl}
+        src={imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${imageFileName}` : imageUrl}
         alt={title}
         className="w-full h-48 object-cover"
       />

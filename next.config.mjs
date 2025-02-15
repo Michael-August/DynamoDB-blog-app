@@ -2,7 +2,12 @@
 const nextConfig = {
 	reactStrictMode: true, // Enables React's Strict Mode for better error handling
 	images: {
-		domains: ["res.cloudinary.com", "m.media-amazon.com", "files.selar.co"],
+		domains: [
+			"res.cloudinary.com",
+			"cdn.ewere.tech",
+			"m.media-amazon.com",
+			"files.selar.co",
+		],
 	},
 	trailingSlash: true,
 };

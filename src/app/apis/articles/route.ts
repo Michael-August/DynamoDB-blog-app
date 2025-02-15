@@ -1,10 +1,12 @@
 import { dynamoDb } from "@/lib/dynamo";
 import { PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { v4 as uuidv4 } from 'uuid';
 
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
 import { UploadApiResponse } from "cloudinary";
+import { S3ClientConfig } from "@/lib/s3bucket.config";
 
 export const runtime = 'nodejs';
 
@@ -41,21 +43,21 @@ export async function POST(req: Request) {
     }
 
     const fileBuffer = await file.arrayBuffer();
-    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          { resource_type: 'auto', folder: "blogImages" },
-          (error, result) => {
-            if (error || !result) reject(error);
-            else resolve(result);
-          },
-        )
-        .end(Buffer.from(fileBuffer));
+    const fileName = file.name
+
+    // Upload file to S3
+    const uploadParams = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: fileName,
+      Body: Buffer.from(fileBuffer),
+      ContentType: file.type,
     });
+
+    await S3ClientConfig.send(uploadParams);
 
     const id = uuidv4();
 
-    const imageUrl = result.secure_url
+    // const imageUrl = result.secure_url
     const slug = generateSlug(title as string, id)
     const status = "unpublished"
 
@@ -65,7 +67,7 @@ export async function POST(req: Request) {
         id,
         title,
         content,
-        imageUrl,
+        imageFileName: fileName,
         status,
         slug,
         tags,

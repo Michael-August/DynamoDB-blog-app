@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card } from "./Card";
 import Link from "next/link";
 
-const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: string; content: string; slug: string; tags: string[], createdAt: any } }) => {
+const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: string; content: string; slug: string; tags: string[], createdAt: any, imageFileName?: string } }) => {
     const router = useRouter()
 
     const handleViewDetails = () => {
@@ -22,7 +22,7 @@ const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: strin
         <>
             <Link key={blog?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${blog?.slug}`}>
                 <img
-                    src={blog?.imageUrl}
+                    src={blog?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${blog?.imageFileName}` : blog?.imageUrl}
                     alt={blog?.title}
                     className="w-full h-48 object-cover"
                 />

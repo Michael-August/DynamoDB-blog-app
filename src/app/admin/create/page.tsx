@@ -79,7 +79,7 @@ const Page = () => {
       setValue("title", fetchedArticle?.title);
       setValue("content", fetchedArticle?.content);
       setTags(fetchedArticle?.tags || []);
-      setImagePreview(fetchedArticle?.imageUrl);
+      setImagePreview(fetchedArticle?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${fetchedArticle?.imageFileName}` : fetchedArticle?.imageUrl);
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -96,7 +96,11 @@ const Page = () => {
       if (data.image && data.image[0]) {
         formData.append("image", data.image[0]);
       } else {
-        formData.append("imageUrl", article?.imageUrl);
+        if (article?.imageUrl) {
+          formData.append("imageUrl", article?.imageUrl);
+        } else {
+          formData.append("imageFileName", article?.imageFileName)
+        }
       }
     } else {
       formData.append("image", data.image?.[0]);
