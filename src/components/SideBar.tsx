@@ -49,7 +49,7 @@ const SideBar = () => {
             {filteredArticles.slice(0, 5)?.map((article: any) => (
                 <Link key={article?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${article?.slug}`}>
                     <img
-                        src={article?.imageUrl}
+                        src={article?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${article?.imageFileName}` : article?.imageUrl}
                         alt={article?.title}
                         className="w-full h-48 object-cover"
                     />
