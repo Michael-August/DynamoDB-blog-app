@@ -135,8 +135,8 @@ export default async function Page({ params }: BlogPageProps) {
                 
                 <div className="md:flex-[8]">
                     <div>
-                        <p
-                            className="text-3xl font-semibold text-black mb-4">{blog?.title || "Test Title"}</p>
+                        <h1
+                            className="text-3xl font-semibold text-black mb-4">{blog?.title || "Test Title"}</h1>
                         {
                             (blog?.subTitle && blog.subTitle !== '') && (
                                 <p className="text-lg mb-4 italic text-black">{blog.title || "Test subtitle"}</p>
@@ -180,9 +180,12 @@ export default async function Page({ params }: BlogPageProps) {
                             src={blog?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${blog?.imageFileName}` : blog?.imageUrl || blogImg}
                             alt="blog img"
                             className="rounded-3xl object-cover"
+                            // width={500}
+                            // height={500}
                             fill
                             quality={100} // Ensures better quality
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            // unoptimized={true}
                         />
                     </div>
                     
