@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     const params = {
-        TableName: "Blog",
+        TableName: "Articles",
         FilterExpression: "contains(tags, :tag)",
         ExpressionAttributeValues: {
         ":tag": tag,

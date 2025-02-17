@@ -130,11 +130,11 @@ export default function Home() {
         }
       </motion.div>
 
-      {/* <Pagination
+      <Pagination
         page={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
-      /> */}
+      />
     </div>
   );
 }

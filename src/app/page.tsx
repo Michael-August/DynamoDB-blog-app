@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -40,6 +41,11 @@ const BlogHome = dynamic(() => import('@/components/Home'), { ssr: false })
 export default function Home() {
   return (
     <>
+      <Head>
+        <noscript>
+          <meta httpEquiv="refresh" content="0; url=/fallback" />
+        </noscript>
+      </Head>
       <BlogHome />
     </>
   );

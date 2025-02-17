@@ -108,6 +108,7 @@ const Page = () => {
 
     formData.append("title", data.title);
     formData.append("content", data.content);
+    formData.append("createdAt", article?.createdAt);
     formData.append("tags", JSON.stringify(tags));
 
     try {

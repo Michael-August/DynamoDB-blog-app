@@ -22,29 +22,31 @@ const Pagination: FC<PaginationProps> = (props) => {
   const pageRange = 3;
 
   const getPageNumbers = () => {
-	const pageNumbers: (string | number)[] = [];
-	const addPage = (page: string | number) => {
-		if (!pageNumbers.includes(page)) {
-		pageNumbers.push(page);
-		}
-	};
+    const pageNumbers: (string | number)[] = [];
+    const addPage = (page: string | number) => {
+      if (!pageNumbers.includes(page)) {
+        pageNumbers.push(page);
+      }
+    };
 
-	for (let i = 1; i <= totalPages; i++) {
-		if (
-			i === 1 ||
-			i === totalPages ||
-			(i >= page - pageRange && i <= page + pageRange)
-			) {
-				addPage(i);
-			} else if (
-				(page - i === pageRange + 1 && i > 2) ||
-				(i - page === pageRange + 1 && i < totalPages - 1)
-			) {
-			addPage("...");
-		}
-	}
-	return pageNumbers;
-	};
+    const showPagesBefore = page - pageRange > 2; // Should we add an ellipsis before?
+    const showPagesAfter = page + pageRange < totalPages - 1; // Should we add an ellipsis after?
+
+    addPage(1); // Always show the first page
+
+    if (showPagesBefore) addPage("..."); // Add ellipsis if needed
+
+    for (let i = Math.max(2, page - pageRange); i <= Math.min(totalPages - 1, page + pageRange); i++) {
+      addPage(i);
+    }
+
+    if (showPagesAfter) addPage("..."); // Add ellipsis if needed
+
+    if (totalPages > 1) addPage(totalPages); // Always show the last page
+
+    return pageNumbers;
+  };
+
 
   const pages = getPageNumbers();
 

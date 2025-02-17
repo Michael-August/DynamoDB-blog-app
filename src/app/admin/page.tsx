@@ -57,11 +57,11 @@ const Page = () => {
     router.push(`/blog/${id}`)
   }
 
-  const handleDelete = async (slug: string, articleId: string) => {
+  const handleDelete = async (slug: string, articleId: string, createdAt: any) => {
     const deleteToastId = toast.info("Deleting...", { autoClose: false });
     try {
 
-      await axios({method: "delete", url: `/apis/articles/${slug}`, data: {id: articleId}});
+      await axios({method: "delete", url: `/apis/articles/${slug}`, data: {id: articleId, createdAt}});
 
       toast.dismiss(deleteToastId);
 
@@ -78,12 +78,12 @@ const Page = () => {
     }
   };
 
-  const handleStatusUpate = async (slug: string, status: "published" | "unpublished", articleId: string) => {
+  const handleStatusUpate = async (slug: string, status: "published" | "unpublished", articleId: string, createdAt: any) => {
 
     const updateToastId = toast.info("Updating...", { autoClose: false });
     try {
 
-      await axios({method: "patch", url: `/apis/articles/${slug}`, data: {status, id: articleId}});
+      await axios({method: "patch", url: `/apis/articles/${slug}`, data: {status, id: articleId, createdAt}});
 
       toast.dismiss(updateToastId);
 
@@ -137,12 +137,12 @@ const Page = () => {
                 <div className="menu-options absolute top-0 right-0 z-50">
                   {openActions === index && 
                   <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
-                      <span onClick={() => handleDelete(article.slug, article.id)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
+                      <span onClick={() => handleDelete(article.slug, article.id, article.createdAt)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
                       <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
                       {article.status === "published" ?
-                        <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
+                        <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id, article?.createdAt)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
                         :
-                        <span onClick={() => handleStatusUpate(article.slug, "published", article.id)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
+                        <span onClick={() => handleStatusUpate(article.slug, "published", article.id, article?.createdAt)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
 
                       }
                   </div>}

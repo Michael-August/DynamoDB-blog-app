@@ -17,7 +17,7 @@ export async function GET(req: Request, {params}: { params: { slug: string } }) 
 
   try {
     const dynamoParams = {
-      TableName: 'Blog',
+      TableName: 'Articles',
       IndexName: 'slug-index',
       KeyConditionExpression: 'slug = :slug',
       ExpressionAttributeValues: {
@@ -58,6 +58,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const title = formData.get('title')
     const content = formData.get('content')
     const id = formData.get('id')
+    const createdAt = formData.get('createdAt')
     const tags = JSON.parse(formData.get("tags") as string)
 
     let imageUrl = undefined;
@@ -101,9 +102,11 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
       expressionAttributeValues[":imageFileName"] = imageFileName;
     }
 
+    const key = { id: String(id), createdAt: Number(createdAt) };
+
     const params = {
-      TableName: 'Blog',
-      Key: { id: id },
+      TableName: 'Articles',
+      Key: key,
       UpdateExpression: `SET ${updateExpressionParts.join(", ")}`,
       ExpressionAttributeNames: { '#title': 'title' },
       ExpressionAttributeValues: expressionAttributeValues,
@@ -133,17 +136,23 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
   try {
     // Parse JSON body
     const body = await req.json();
-    const { status, id } = body;
+    const { status, id, createdAt } = body;
 
     // Validate the status field
     if (!status || typeof status !== 'string') {
       return NextResponse.json({ message: "Invalid status", success: false, status: 400 }, { status: 400 });
     }
 
+    if (!createdAt) {
+      return NextResponse.json({ message: "Invalid createdAt value", success: false, status: 400 }, { status: 400 });
+    }
+
+    const key = { id: String(id), createdAt: createdAt };
+
     // Prepare parameters for the UpdateCommand
     const params = {
-      TableName: 'Blog',
-      Key: { id: id },
+      TableName: 'Articles',
+      Key: key,
       UpdateExpression: 'set #status = :status',
       ExpressionAttributeNames: { '#status': 'status' },
       ExpressionAttributeValues: {
@@ -182,16 +191,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
 // DELETE Request
 export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
   const { slug } = params;
-  const {id} = await req.json()
+  const {id, createdAt} = await req.json()
 
   if (!slug || typeof slug !== 'string') {
     return NextResponse.json({ message: "Invalid slug", success: false, status: 400 }, { status: 400 });
   }
 
+  const key = { id: String(id), createdAt: createdAt };
+
   try {
     const params = {
-      TableName: 'Blog',
-      Key: { id: id },
+      TableName: 'Articles',
+      Key: key,
     };
 
     const command = new DeleteCommand(params);
