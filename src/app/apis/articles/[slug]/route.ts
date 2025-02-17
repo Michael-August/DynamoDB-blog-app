@@ -17,7 +17,7 @@ export async function GET(req: Request, {params}: { params: { slug: string } }) 
 
   try {
     const dynamoParams = {
-      TableName: 'Articles',
+      TableName: 'Blog',
       IndexName: 'slug-index',
       KeyConditionExpression: 'slug = :slug',
       ExpressionAttributeValues: {
