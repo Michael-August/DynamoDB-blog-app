@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     const status = "unpublished"
 
     const params = {
-      TableName: 'Articles',
+      TableName: 'Blog',
       Item: {
         id,
         title,
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: NextRequest) {
   try {
-    const params = { TableName: "Articles" };
+    const params = { TableName: "Blog" };
     let allItems: any[] = [];
     let lastEvaluatedKey = undefined;
 

@@ -105,8 +105,9 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const key = { id: String(id), createdAt: Number(createdAt) };
 
     const params = {
-      TableName: 'Articles',
-      Key: key,
+      TableName: 'Blog',
+      // Key: key,
+      Key: {id: id},
       UpdateExpression: `SET ${updateExpressionParts.join(", ")}`,
       ExpressionAttributeNames: { '#title': 'title' },
       ExpressionAttributeValues: expressionAttributeValues,
@@ -151,8 +152,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
 
     // Prepare parameters for the UpdateCommand
     const params = {
-      TableName: 'Articles',
-      Key: key,
+      TableName: 'Blog',
+      // Key: key,
+      Key: { id },
       UpdateExpression: 'set #status = :status',
       ExpressionAttributeNames: { '#status': 'status' },
       ExpressionAttributeValues: {
@@ -201,8 +203,9 @@ export async function DELETE(req: Request, { params }: { params: { slug: string 
 
   try {
     const params = {
-      TableName: 'Articles',
-      Key: key,
+      TableName: 'Blog',
+      // Key: key,
+      Key: {id}
     };
 
     const command = new DeleteCommand(params);
