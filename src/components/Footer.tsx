@@ -40,7 +40,7 @@ const Footer = () => {
                 </div>
 
                 <div className='text-white text-sm mt-5'>
-                    <Link href="/terms">Terms of Service</Link> | <Link href="/privacy">Privacy Policy</Link>
+                    <a href="/terms">Terms of Service</a> | <a href="/privacy">Privacy Policy</a>
                 </div>
             </div>
         </motion.div>

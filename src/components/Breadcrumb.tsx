@@ -24,9 +24,9 @@ const Breadcrumb = () => {
     <nav aria-label="breadcrumb">
       <ol style={breadcrumbStyle}>
         <li style={breadcrumbItemStyle}>
-          <Link href="/" style={linkStyle}>
+          <a href="/" style={linkStyle}>
             Articles
-          </Link>
+          </a>
         </li>
         <li style={breadcrumbItemStyle}>
           <ChevronRight />
@@ -34,9 +34,9 @@ const Breadcrumb = () => {
         {breadcrumbItems.map((item, index) => (
           <li className='' key={index} style={breadcrumbItemStyle}>
             {index !== breadcrumbItems.length - 1 ? (
-              <Link href={item.path} style={linkStyle}>
+              <a href={item.path} style={linkStyle}>
                 {hasTag ? item.label : item.label.slice(0, -7)}
-              </Link>
+              </a>
             ) : (
               <span style={activeStyle}>{hasTag || item.label === "about" ? item.label : item.label.slice(0, -7)}</span>
             )}

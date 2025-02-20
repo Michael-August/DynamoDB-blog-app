@@ -20,7 +20,7 @@ const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: strin
 
     return (
         <>
-            <Link key={blog?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${blog?.slug}`}>
+            <a key={blog?.id} className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden" href={`/blog/${blog?.slug}`}>
                 <img
                     src={blog?.imageFileName ? `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${blog?.imageFileName}` : blog?.imageUrl}
                     alt={blog?.title}
@@ -43,7 +43,7 @@ const BlogCard = ({ blog }: { blog: { id: string; title: string; imageUrl: strin
                     ))}
                     </div>
                 </div>
-            </Link>
+            </a>
         </>
     )
 }

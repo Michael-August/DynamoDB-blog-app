@@ -29,7 +29,7 @@ const NavBar = () => {
                         exit={{ opacity: 0, x: 20 }}
                         transition={{ duration: 0.5 }}
                         className="logo text-base lg:text-xl font-semibold">
-                        <Link href={"/"}>Ewere Diagboya</Link>
+                        <a href={"/"}>Ewere Diagboya</a>
                     </motion.div>
                     {/* <ul className='hidden lg:flex lg:items-center lg:gap-5'>
                         <li>
@@ -54,9 +54,9 @@ const NavBar = () => {
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.5 }}
                         className='flex items-center gap-4'>
-                        <Link href={"/about"} className='border-2 transition-all border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
+                        <a href={"/about"} className='border-2 transition-all border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                             About
-                        </Link>
+                        </a>
                         <span onClick={() => setSubModalOpen(!subModalOpen)} className='px-4 py-2 hover:bg-black transition-all hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                             Subscribe
                         </span>
