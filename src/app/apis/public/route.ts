@@ -56,22 +56,33 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   try {
     const search = req.nextUrl.searchParams.get("search");
+    const tagsParam = req.nextUrl.searchParams.get("tags"); // Get tags from query
 
     const params: any = {
       TableName: "Blog",
       FilterExpression: "#status = :status",
       ExpressionAttributeNames: {
-        "#status": "status", // Map reserved keyword 'status' to '#status'
+        "#status": "status",
       },
       ExpressionAttributeValues: {
         ":status": "published",
       } as { [key: string]: any },
     };
 
+    // Apply search filter if search term is provided
     if (search) {
       params.FilterExpression +=
-        " and (contains(title, :search) or contains(content, :search))";
+        " AND (contains(title, :search) OR contains(content, :search))";
       params.ExpressionAttributeValues[":search"] = search;
+    }
+
+    // Apply tags filter if tags are provided
+    if (tagsParam) {
+      const tagsArray = tagsParam.split(",");
+      tagsArray.forEach((tag, index) => {
+        params.FilterExpression += ` AND contains(tags, :tag${index})`;
+        params.ExpressionAttributeValues[`:tag${index}`] = tag;
+      });
     }
 
     let allItems: any[] = [];
@@ -80,17 +91,17 @@ export async function GET(req: NextRequest) {
     do {
       const command: ScanCommand = new ScanCommand({
         ...params,
-        ExclusiveStartKey: lastEvaluatedKey, // Continue from the last batch
+        ExclusiveStartKey: lastEvaluatedKey,
       });
 
       const data = await dynamoDb.send(command);
 
       if (data.Items) {
-        allItems = [...allItems, ...data.Items]; // Collect all fetched items
+        allItems = [...allItems, ...data.Items];
       }
 
-      lastEvaluatedKey = data.LastEvaluatedKey; // Check if more data exists
-    } while (lastEvaluatedKey); // Continue scanning until all data is retrieved
+      lastEvaluatedKey = data.LastEvaluatedKey;
+    } while (lastEvaluatedKey);
 
     return NextResponse.json(
       {

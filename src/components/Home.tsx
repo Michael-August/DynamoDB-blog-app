@@ -7,18 +7,18 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 import banner from "@/public/images/main-image.jpg"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
 import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -29,11 +29,18 @@ export default function Home() {
 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
+  const [topTags, setTopTags] = useState<string[]>([]);
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+
+  const router = useRouter();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   const debounceDelay = 1000;
 
   const pathname = usePathname();
 
   const fetchData = async (searchValue?: string, queryParams?: any) => {
+    setLoading(true);
     try {
       const response = await axios.get(`/apis/public?${queryParams?.toString()}&&search=${searchValue ? searchValue : ''}`);
       setArticles(response.data?.posts);
@@ -53,8 +60,26 @@ export default function Home() {
       queryParams.append('lastKey', lastKey);
     }
 
+    if (selectedTags.length > 0) {
+      queryParams.append("tags", selectedTags.join(","));
+    }
+
     fetchData(undefined, queryParams);
-  }, [currentPage])
+  }, [currentPage, selectedTags])
+
+  const computedTags = useMemo(() => {
+    const tagFrequency = articles
+      .flatMap((article: any) => article.tags)
+      .reduce<Record<string, number>>((acc, tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+        return acc;
+      }, {});
+
+    return Object.entries(tagFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [articles]);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -81,6 +106,35 @@ export default function Home() {
         document.title = "Home for all DevOps, AWS and Cloud-native Content";
     }
   }, [pathname]);
+
+  useEffect(() => {
+    if (topTags.length === 0 && articles.length > 0) {
+      setTopTags(computedTags);
+    }
+  }, [computedTags, topTags, articles]);
+
+  // Get tags from URL on initial render
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tagsFromUrl = urlParams.get("tags")?.split(",") || [];
+    setSelectedTags(tagsFromUrl);
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedTags.length > 0) {
+      params.set("tags", selectedTags.join(","));
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [selectedTags, router]);
+
+  // Toggle tag selection
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
   return (
     <div>
       {/* <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
@@ -102,6 +156,47 @@ export default function Home() {
         className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'>
         <FaSearch />
         <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-wrap gap-2 my-10"
+      >
+        {topTags.map((tag) => (
+          <div
+            key={tag}
+            className="relative"
+            onMouseEnter={() => setHoveredTag(tag)}
+            onMouseLeave={() => setHoveredTag(null)}
+          >
+            <motion.div
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className={`px-3 py-1 cursor-pointer text-sm rounded-md transition ${
+                selectedTags.includes(tag)
+                  ? "bg-black text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+              whileTap={{ scale: 0.9 }}
+            >
+              {tag}
+            </motion.div>
+
+            {hoveredTag === tag && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-1/2 w-52 -translate-x-1/2 bottom-full mb-2 px-2 py-1 text-xs bg-black text-white rounded-md"
+              >
+                Click to filter for articles with tag: {tag}
+              </motion.div>
+            )}
+          </div>
+        ))}
       </motion.div>
       <motion.div
         initial={{ opacity: 0, x: 20 }}
