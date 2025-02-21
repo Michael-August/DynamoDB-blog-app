@@ -17,6 +17,7 @@ import SideBar from '@/components/SideBar';
 import AdComponent from '@/components/AdsenseSlot';
 
 const BlogContent = dynamic(() => import('@/components/BlogContent'), { ssr: false });
+const TagNavLinks = dynamic(() => import('@/components/TagsNavigation'), { ssr: false });
 
 export interface BlogPostCardProps {
   title: string;
@@ -27,7 +28,7 @@ export interface BlogPostCardProps {
 }
 
 interface BlogPageProps {
-  params: { slug: string };
+  params: { slug: string, tag: string };
 }
 
 // Server-side data fetching
@@ -131,6 +132,23 @@ export default async function Page({ params }: BlogPageProps) {
     return (
         <>
             {/* <SEO description={blog?.content.slice(4, 80) + '...'} title={blog?.title} image={blog?.imageUrl} slug={blog?.slug} article={blog?.content.slice(0, 80)} /> */}
+            <TagNavLinks topTags={["aws",
+                "whatis",
+                "cloudcomputing",
+                "kubernetes",
+                "containers",
+                "ai",
+                "announcements",
+                "serverless",
+                "docker",
+                "security",
+                "devops",
+                "observability",
+                "storage",
+                "monitoring",
+                "events"]}
+                currentTag={params.tag}
+            />
             <div className='flex flex-col md:flex-row gap-5'>
                 
                 <div className="md:flex-[8]">

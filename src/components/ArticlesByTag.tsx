@@ -112,9 +112,9 @@ export default function ArticlesByTag() {
             {loading ?
             <CardSkeletonLoader /> :
             <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-                {articles.map((article: any) => (
-                <BlogCard blog={article} key={article.id} />
-                ))}
+                {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
+                  <BlogCard blog={article} key={article.id} />
+              ))}
             </motion.div>
             }
         </motion.div>
