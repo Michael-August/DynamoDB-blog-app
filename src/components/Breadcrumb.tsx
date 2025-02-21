@@ -54,6 +54,7 @@ const breadcrumbStyle = {
   alignItems: 'center',
   padding: 0,
   margin: 0,
+  marginBottom: '16px',
   fontSize: '14px',
 };
 

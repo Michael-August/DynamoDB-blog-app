@@ -54,10 +54,10 @@ const NavBar = () => {
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.5 }}
                         className='flex items-center gap-4'>
-                        <a href={"/about"} className='border-2 transition-all border-black px-4 py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
+                        <a href={"/about"} className='border-2 transition-all border-black px-2 py-1 text-sm lg:text-base lg:px-4 lg:py-2 hover:bg-black hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                             About
                         </a>
-                        <span onClick={() => setSubModalOpen(!subModalOpen)} className='px-4 py-2 hover:bg-black transition-all hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
+                        <span onClick={() => setSubModalOpen(!subModalOpen)} className='px-2 py-1 lg:px-4 lg:py-2 text-sm lg:text-base  hover:bg-black transition-all hover:text-white rounded-tl-2xl rounded-br-2xl cursor-pointer'>
                             Subscribe
                         </span>
                         {(pathname === "/admin/" || pathname === "/admin/create/") && <div className='cursor-pointer hidden lg:block' onClick={() => { localStorage.removeItem("token"); router.push("/auth")}}>sign out</div>}
