@@ -56,7 +56,7 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   try {
     const search = req.nextUrl.searchParams.get("search");
-    const tagsParam = req.nextUrl.searchParams.get("tags"); // Get tags from query
+    const tagsParam = req.nextUrl.searchParams.get("tag"); // Get tags from query
 
     const params: any = {
       TableName: "Blog",
@@ -78,11 +78,8 @@ export async function GET(req: NextRequest) {
 
     // Apply tags filter if tags are provided
     if (tagsParam) {
-      const tagsArray = tagsParam.split(",");
-      tagsArray.forEach((tag, index) => {
-        params.FilterExpression += ` AND contains(tags, :tag${index})`;
-        params.ExpressionAttributeValues[`:tag${index}`] = tag;
-      });
+      params.FilterExpression += ` AND contains(tags, :tag)`;
+      params.ExpressionAttributeValues[":tag"] = tagsParam;
     }
 
     let allItems: any[] = [];

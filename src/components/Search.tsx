@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
 import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
 
-export default function Home() {
+export default function Search() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,7 @@ export default function Home() {
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
 
   const router = useRouter();
-  const [selectedTags, setSelectedTags] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const debounceDelay = 1000;
 
@@ -43,7 +43,6 @@ export default function Home() {
       setLastKey(response.data?.lastKey);
       setTotalPages(Math.ceil(response.data?.total / response.data?.limit))
     } catch (error: any) {
-      console.log(error)
       toast.error(`${error.message}`)
     } finally {
       setLoading(false);
@@ -57,8 +56,8 @@ export default function Home() {
       queryParams.append('lastKey', lastKey);
     }
 
-    if (selectedTags) {
-      queryParams.append("tag", selectedTags);
+    if (selectedTags.length > 0) {
+      queryParams.append("tags", selectedTags.join(","));
     }
 
     fetchData(undefined, queryParams);
@@ -113,21 +112,23 @@ export default function Home() {
   // Get tags from URL on initial render
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const tagFromUrl = urlParams.get("tag");
-    setSelectedTags(tagFromUrl as string);
+    const tagsFromUrl = urlParams.get("tags")?.split(",") || [];
+    setSelectedTags(tagsFromUrl);
   }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (selectedTags) {
-      params.set("tag", selectedTags);
+    if (selectedTags.length > 0) {
+      params.set("tags", selectedTags.join(","));
     }
     router.push(`?${params.toString()}`, { scroll: false });
   }, [selectedTags, router]);
 
   // Toggle tag selection
-  const selectTag = (tag: string) => {
-    setSelectedTags(tag);
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
   };
 
   return (
@@ -157,31 +158,40 @@ export default function Home() {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-wrap my-10 gap-4 border-b border-gray-300 pb-2"
+        className="flex flex-wrap gap-2 my-10"
       >
         {topTags.map((tag) => (
-          <motion.div
+          <div
             key={tag}
-            onClick={() => selectTag(tag)}
+            className="relative"
             onMouseEnter={() => setHoveredTag(tag)}
             onMouseLeave={() => setHoveredTag(null)}
-            className={`relative cursor-pointer text-sm font-medium transition-colors ${
-              selectedTags === tag ? "text-black" : "text-gray-600 hover:text-black"
-            }`}
-            whileTap={{ scale: 0.95 }}
           >
-            {tag}
-            {(selectedTags === tag || hoveredTag === tag) && (
+            <motion.div
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className={`px-3 py-1 cursor-pointer text-sm rounded-md transition ${
+                selectedTags.includes(tag)
+                  ? "bg-black text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+              whileTap={{ scale: 0.9 }}
+            >
+              {tag}
+            </motion.div>
+
+            {hoveredTag === tag && (
               <motion.div
-                layoutId="underline"
-                className="absolute left-0 -bottom-2 h-[2px] w-full bg-black"
-                initial={{ opacity: 0, y: 2 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 2 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-              />
+                className="absolute left-1/2 w-52 -translate-x-1/2 bottom-full mb-2 px-2 py-1 text-xs bg-black text-white rounded-md"
+              >
+                Click to filter for articles with tag: {tag}
+              </motion.div>
             )}
-          </motion.div>
+          </div>
         ))}
       </motion.div>
       <motion.div
