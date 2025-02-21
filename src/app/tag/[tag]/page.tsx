@@ -1,128 +1,47 @@
-"use client"
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-import BlogCard from "@/components/BlogCard";
-import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import Pagination from "@/components/Pagination";
-import { useRouter } from "next/navigation";
-import { FaSearch } from "react-icons/fa";
-import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
-import { useParams } from "next/navigation";
-import { capitalizeWords } from "../../../../utils/capitalizeWords";
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+
+  return {
+    title: "Home for all DevOps, AWS and Cloud-native Content",
+    description: "Home for all DevOps, AWS and Cloud-native Content",
+    keywords: ["DevOps", "Cloud"],
+    alternates: { canonical: `${baseUrl}` },
+    robots: { index: true, follow: true },
+    authors: [{ name: "Ewere Diagboya"  }],
+    openGraph: {
+      title: "ewere.tech",
+      description: "Home for all DevOps, AWS and Cloud-native Content",
+      url: `${baseUrl}`,
+      type: "website",
+      images: [
+          {
+              url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+              width: 1200,
+              height: 630,
+              alt: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images",
+          },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: "ewere.tech",
+      description: "Home for all DevOps, AWS and Cloud-native Content",
+      images: ["https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.teknopk.com%2Fwp-content%2Fuploads%2F2018%2F03%2Fblogging.jpg&f=1&nofb=1&ipt=511e91539d4619a40bf3ecd14fa546fc5f2c7dbbf8231b5e8a870eac9eb988bc&ipo=images"],
+    },
+  };
+}
+
+const ArticleTags = dynamic(() => import('@/components/ArticlesByTag'), { ssr: false })
 
 export default function TagPage() {
-    const [articles, setArticles] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-    const [topTags, setTopTags] = useState<string[]>([
-        "aws",
-        "whatis",
-        "cloudcomputing",
-        "kubernetes",
-        "containers",
-        "ai",
-        "announcement",
-        "announcements",
-        "serverless",
-        "docker",
-        "security",
-        "devops",
-        "observability",
-        "storage",
-        "monitoring",
-    ]);
-    const [hoveredTag, setHoveredTag] = useState<string | null>(null);
-    const router = useRouter();
-    const { tag: currentTag } = useParams();
-    const debounceDelay = 1000;
-
-    const fetchData = async (searchValue?: string) => {
-        setLoading(true);
-        try {
-        const response = await axios.get(`/apis/public?tag=${currentTag}&search=${searchValue || ""}`);
-        setArticles(response.data?.posts);
-        setTotalPages(Math.ceil(response.data?.total / response.data?.limit));
-        } catch (error: any) {
-        console.log(error);
-        toast.error(`${error.message}`);
-        } finally {
-        setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [currentTag]);
-
-    useEffect(() => {
-        const debounceTimer = setTimeout(() => {
-        setDebouncedSearchTerm(searchTerm);
-        }, debounceDelay);
-
-        return () => clearTimeout(debounceTimer);
-    }, [searchTerm, debounceDelay]);
-
-    useEffect(() => {
-        if (debouncedSearchTerm) {
-        fetchData(debouncedSearchTerm);
-        } else {
-        fetchData();
-        }
-    }, [debouncedSearchTerm]);
-
-    return (
-        <div>
-        <motion.div className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'>
-            <FaSearch />
-            <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
-        </motion.div>
-        <motion.div className="flex flex-wrap my-10 gap-4 border-b border-gray-300 pb-2">
-            {topTags.map((tag) => (
-            <motion.a
-                key={tag}
-                href={`/tag/${tag}`}
-                onMouseEnter={() => setHoveredTag(tag)}
-                onMouseLeave={() => setHoveredTag(null)}
-                className="relative cursor-pointer text-sm font-medium transition-colors text-gray-600 hover:text-black"
-                whileTap={{ scale: 0.95 }}
-            >
-                {tag}
-                {(currentTag === tag || hoveredTag === tag) && (
-                <motion.div
-                    layoutId="underline"
-                    className="absolute left-0 -bottom-2 h-[2px] w-full bg-black"
-                    initial={{ opacity: 0, y: 2 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 2 }}
-                    transition={{ duration: 0.2 }}
-                />
-                )}
-            </motion.a>
-            ))}
-        </motion.div>
-        <motion.div className="articles px-4 py-5 mb-10">
-            <div className="top flex items-center gap-4 text-black mb-10">
-            <span className="font-semibold text-base lg:text-3xl">{capitalizeWords(currentTag as string)}</span>
-            </div>
-            {loading ?
-            <CardSkeletonLoader /> :
-            <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-                {articles.map((article: any) => (
-                <BlogCard blog={article} key={article.id} />
-                ))}
-            </motion.div>
-            }
-        </motion.div>
-        <Pagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-        />
-        </div>
-    );
+  return (
+    <>
+      <ArticleTags />
+    </>
+  );
 }
+

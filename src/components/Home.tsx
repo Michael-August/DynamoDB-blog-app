@@ -159,7 +159,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="flex flex-wrap my-10 gap-4 border-b border-gray-300 pb-2"
       >
-        {topTags.map((tag) => (
+        {[...topTags, "events"].filter(tag => tag !== 'announcement').map((tag) => (
           <motion.a
             key={tag}
             // onClick={() => selectTag(tag)}
