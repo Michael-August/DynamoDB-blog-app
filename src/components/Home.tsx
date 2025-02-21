@@ -74,7 +74,7 @@ export default function Home() {
 
     return Object.entries(tagFrequency)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
+      .slice(0, 15)
       .map(([tag]) => tag);
   }, [articles]);
 
@@ -160,11 +160,12 @@ export default function Home() {
         className="flex flex-wrap my-10 gap-4 border-b border-gray-300 pb-2"
       >
         {topTags.map((tag) => (
-          <motion.div
+          <motion.a
             key={tag}
-            onClick={() => selectTag(tag)}
+            // onClick={() => selectTag(tag)}
             onMouseEnter={() => setHoveredTag(tag)}
             onMouseLeave={() => setHoveredTag(null)}
+            href={`/tag/${tag}`}
             className={`relative cursor-pointer text-sm font-medium transition-colors ${
               selectedTags === tag ? "text-black" : "text-gray-600 hover:text-black"
             }`}
@@ -181,7 +182,7 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
               />
             )}
-          </motion.div>
+          </motion.a>
         ))}
       </motion.div>
       <motion.div
