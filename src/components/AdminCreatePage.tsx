@@ -34,6 +34,7 @@ const Page = () => {
       [{ size: [] }],
       [{ header: "1" }, { header: "2" }, { font: [] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
+      ["code-block"], // Enable code block button
       [{ list: "ordered" }, { list: "bullet" }],
       ["link", "image", "video"],
       ["clean"], // Removes formatting
@@ -49,6 +50,7 @@ const Page = () => {
     "underline",
     "strike",
     "blockquote",
+    "code-block",
     "list",
     "bullet",
     "link",

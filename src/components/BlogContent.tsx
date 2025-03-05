@@ -14,7 +14,9 @@ const BlogContent = ({content}: {content: any}) => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
                 className="ql-editor"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content, {
+                    ADD_ATTR: ["target"], // Allow target attribute
+                }).replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ') }}
             ></motion.div>
         </div>
     )
