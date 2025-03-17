@@ -53,7 +53,7 @@ export default function MainRootLayout({ children,
           }}
         />
       </head>
-      <body className="container mx-auto bg-[#f7fbff]">
+      <body className="container mx-auto bg-white">
         <GoogleAnalytics gaMeasurementId="G-W7QZT1RWGW" trackPageViews />
         <Analytics />
         <ToastContainer
