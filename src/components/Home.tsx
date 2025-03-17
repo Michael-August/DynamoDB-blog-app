@@ -1,68 +1,72 @@
-"use client"
+"use client";
 
 import BlogCard from "@/components/BlogCard";
 import { motion } from "framer-motion";
-
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Loader2 } from "lucide-react";
-import Pagination from "@/components/Pagination";
-import { usePathname, useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa";
 import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
+import Pagination from "@/components/Pagination";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [lastKey, setLastKey] = useState<string | null>(null);
+  const [previousKeys, setPreviousKeys] = useState<string[]>([]); // Stack to track previous pages
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string>("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const [lastKey, setLastKey] = useState(null);
-
-  const [searchTerm, setSearchTerm] = useState("")
-
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const [topTags, setTopTags] = useState<string[]>([]);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
 
   const router = useRouter();
-  const [selectedTags, setSelectedTags] = useState<string>("");
+  const pathname = usePathname();
 
   const debounceDelay = 1000;
 
-  const pathname = usePathname();
-
-  const fetchData = async (searchValue?: string, queryParams?: any) => {
+  /** Fetch articles */
+  const fetchData = async (searchValue?: string, newLastKey?: string | null, resetPagination: boolean = false) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/apis/public?${queryParams?.toString()}&&search=${searchValue ? searchValue : ''}`);
-      setArticles(response.data?.posts);
-      setLastKey(response.data?.lastKey);
-      setTotalPages(Math.ceil(response.data?.total / response.data?.limit))
+      const queryParams = new URLSearchParams();
+
+      if (newLastKey) {
+        queryParams.append("lastKey", newLastKey);
+      }
+
+      if (searchValue) {
+        queryParams.append("search", searchValue);
+      }
+
+      if (selectedTags) {
+        queryParams.append("tag", selectedTags);
+      }
+
+      const response = await axios.get(`/apis/public?${queryParams.toString()}`);
+      const newPosts = response.data?.posts || [];
+      const nextLastKey = response.data?.lastKey || null;
+
+      if (resetPagination) {
+        setArticles(newPosts);
+        setPreviousKeys([]); // Reset history when search/tag changes
+      } else {
+        setArticles(newLastKey ? newPosts : [...articles, ...newPosts]);
+      }
+
+      setLastKey(nextLastKey);
     } catch (error: any) {
-      console.log(error)
-      toast.error(`${error.message}`)
+      console.error(error);
+      toast.error(`${error.message}`);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams();
-
-    if (lastKey) {
-      queryParams.append('lastKey', lastKey);
-    }
-
-    if (selectedTags) {
-      queryParams.append("tag", selectedTags);
-    }
-
-    fetchData(undefined, queryParams);
-  }, [currentPage, selectedTags])
 
   const computedTags = useMemo(() => {
     const tagFrequency = articles
@@ -78,24 +82,36 @@ export default function Home() {
       .map(([tag]) => tag);
   }, [articles]);
 
+  /** Handle pagination */
+  const loadNextPage = () => {
+    if (!lastKey) return;
+    setPreviousKeys((prev) => [...prev, lastKey]); // Save the current key before moving forward
+    fetchData(debouncedSearchTerm, lastKey);
+  };
+
+  const loadPreviousPage = () => {
+    if (previousKeys.length === 0) return;
+    const prevLastKey = previousKeys.pop(); // Remove the last key from history
+    setPreviousKeys([...previousKeys]); // Update history
+    fetchData(debouncedSearchTerm, prevLastKey || null);
+  };
+
+  /** Handle search with debounce */
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-    setDebouncedSearchTerm(searchTerm);
+      setDebouncedSearchTerm(searchTerm);
     }, debounceDelay);
-
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, debounceDelay]);
 
   useEffect(() => {
-    if (debouncedSearchTerm) {
-      const search = async () => {
-          fetchData(debouncedSearchTerm)
-      };
-      search();
-    } else {
-      fetchData()
-    }
+    fetchData(debouncedSearchTerm, null, true);
   }, [debouncedSearchTerm]);
+
+  /** Handle tag changes */
+  useEffect(() => {
+    fetchData(undefined, null, true);
+  }, [selectedTags]);
 
   useEffect(() => {
     // Default title for the home page
@@ -132,25 +148,21 @@ export default function Home() {
 
   return (
     <div>
-      {/* <div className="intro flex flex-col md:flex-row justify-between gap-5 mb-4 pt-5">
-        <div> 
-          <Image src={ banner } className="w-[inherit] h-[inherit]" alt={""} />
-        </div>
-        <div className="details text-center md:text-left leading-6 text-sm lg:text-base lg:leading-10">
-          <span className="font-semibold text-gray-800 text-2xl lg:text-3xl">Ewere Diagboya </span>
-          <span>
-            started his career in tech in 2003. He started as a Software Developer in PHP, Visual Basic, HTML, and CSS. He later switched to DevOps and Cloud in 2015. He is the first AWS Community Hero in Africa and the author of two books: Infrastructure Monitoring with Amazon CloudWatch and Techtionary which are available on Amazon.com. He is an AWS Community leader in Nigeria. He loves to talk about Cloud Computing, DevOps, and innovations around efficient software delivery technologies and processes. He has also been a two-time judge for the Cybersafe Foundation Cybergirls Fellowship and PipeOps Hackathon.
-          </span>
-        </div>
-      </div> */}
+      {/* Search Bar */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5 }}
-        className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'>
+        className="flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400">
         <FaSearch />
-        <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
+        <input
+          placeholder="Search articles..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          type="text"
+          className="bg-transparent focus:outline-none focus:ring-0 w-full"
+        />
       </motion.div>
       <motion.div
         initial={{ opacity: 0, x: 20 }}
@@ -185,39 +197,43 @@ export default function Home() {
           </motion.a>
         ))}
       </motion.div>
+
+      {/* Articles */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.5 }}
-        className="articles px-4 py-5 mb-10"
-      >
+        className="articles px-4 py-5 mb-10">
         <div className="top flex items-center gap-4 text-black mb-10">
-          {/* <AiFillRead className="font-semibold text-3xl text-slate-800" /> */}
-          <span className="font-semibold text-base lg:text-3xl">Home for all DevOps, AWS and Cloud-native Content</span>
+          <span className="font-semibold text-base lg:text-3xl">
+            Home for all DevOps, AWS, and Cloud-native Content
+          </span>
         </div>
 
-        {loading ?
-          <CardSkeletonLoader /> :
-          <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-              {articles.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((article: any) => (
-                  <BlogCard blog={article} key={article.id} />
-              ))}
+        {loading ? (
+          <CardSkeletonLoader />
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            {articles.map((article: any) => (
+              <BlogCard blog={article} key={article.id} />
+            ))}
           </motion.div>
-        }
+        )}
       </motion.div>
 
+      {/* Pagination */}
       <Pagination
-        page={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
+        onNext={loadNextPage}
+        onPrevious={loadPreviousPage}
+        canGoNext={!!lastKey}
+        canGoPrevious={previousKeys.length > 0}
       />
     </div>
   );
 }
-

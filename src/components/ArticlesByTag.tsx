@@ -41,38 +41,75 @@ export default function ArticlesByTag() {
     const { tag: currentTag } = useParams();
     const debounceDelay = 1000;
 
-    const fetchData = async (searchValue?: string) => {
+    const [lastKey, setLastKey] = useState<string | null>(null);
+    const [previousKeys, setPreviousKeys] = useState<string[]>([]); // Stack to track previous pages
+
+    const fetchData = async (tag: string, searchValue?: string, newLastKey?: string | null, resetPagination: boolean = false,) => {
         setLoading(true);
         try {
-        const response = await axios.get(`/apis/public?tag=${currentTag}&search=${searchValue || ""}`);
-        setArticles(response.data?.posts);
-        setTotalPages(Math.ceil(response.data?.total / response.data?.limit));
+
+            const queryParams = new URLSearchParams();
+
+            if (newLastKey) {
+                queryParams.append("lastKey", newLastKey);
+            }
+
+            if (searchValue) {
+                queryParams.append("search", searchValue);
+            }
+
+            if (tag) {
+                queryParams.append("tag", tag as string);
+            }
+
+            const response = await axios.get(`/apis/public?${queryParams.toString()}`);
+            const newPosts = response.data?.posts || [];
+            const nextLastKey = response.data?.lastKey || null;
+
+            if (resetPagination) {
+                setArticles(newPosts);
+                setPreviousKeys([]); // Reset history when search/tag changes
+            } else {
+                setArticles(newLastKey ? newPosts : [...articles, ...newPosts]);
+            }
+
+            setLastKey(nextLastKey);
         } catch (error: any) {
-        console.log(error);
-        toast.error(`${error.message}`);
+            console.log(error);
+            toast.error(`${error.message}`);
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
+    /** Handle pagination */
+    const loadNextPage = () => {
+        if (!lastKey) return;
+        setPreviousKeys((prev) => [...prev, lastKey]); // Save the current key before moving forward
+        fetchData(currentTag as string, debouncedSearchTerm, lastKey);
+    };
+
+    const loadPreviousPage = () => {
+        if (previousKeys.length === 0) return;
+        const prevLastKey = previousKeys.pop(); // Remove the last key from history
+        setPreviousKeys([...previousKeys]); // Update history
+        fetchData(currentTag as string, debouncedSearchTerm, prevLastKey || null);
+    };
+
     useEffect(() => {
-        fetchData();
+        fetchData(currentTag as string, undefined, null, true);
     }, [currentTag]);
 
     useEffect(() => {
         const debounceTimer = setTimeout(() => {
-        setDebouncedSearchTerm(searchTerm);
+            setDebouncedSearchTerm(searchTerm);
         }, debounceDelay);
 
         return () => clearTimeout(debounceTimer);
     }, [searchTerm, debounceDelay]);
 
     useEffect(() => {
-        if (debouncedSearchTerm) {
-        fetchData(debouncedSearchTerm);
-        } else {
-        fetchData();
-        }
+        fetchData(currentTag as string, debouncedSearchTerm, null, true);
     }, [debouncedSearchTerm]);
 
     return (
@@ -118,10 +155,12 @@ export default function ArticlesByTag() {
             </motion.div>
             }
         </motion.div>
+        {/* Pagination */}
         <Pagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
+            onNext={loadNextPage}
+            onPrevious={loadPreviousPage}
+            canGoNext={!!lastKey}
+            canGoPrevious={previousKeys.length > 0}
         />
         </div>
     );

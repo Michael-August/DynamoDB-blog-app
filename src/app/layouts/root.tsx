@@ -13,7 +13,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Analytics } from "@vercel/analytics/react"
 
 import {motion} from "framer-motion"
-import SideBar from '@/components/SideBar';
 import { usePathname } from 'next/navigation';
 
 export default function MainRootLayout({ children,
@@ -53,7 +52,7 @@ export default function MainRootLayout({ children,
           }}
         />
       </head>
-      <body className="container mx-auto bg-[#f7fbff]">
+      <body className="container mx-auto bg-white">
         <GoogleAnalytics gaMeasurementId="G-W7QZT1RWGW" trackPageViews />
         <Analytics />
         <ToastContainer
