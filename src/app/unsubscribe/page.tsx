@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 export default function UnsubscribePage() {
-    const searchParams = useSearchParams();
-    const email = searchParams.get("email");
+    const {email} = useParams();
     const [message, setMessage] = useState("Processing your request...");
 
     useEffect(() => {

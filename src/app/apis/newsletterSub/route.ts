@@ -209,7 +209,6 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ message: "Email is required.", success: false }, { status: 400 });
         }
 
-        // Step 1: Query to find the subscriber's ID using the email-index GSI
         const queryParams = {
             TableName: "Subscribers",
             IndexName: "email-index",
@@ -226,13 +225,11 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ message: "Subscriber not found.", success: false }, { status: 404 });
         }
 
-        // Get the subscriber's unique ID
         const subscriberId = queryResult.Items[0].id;
 
-        // Step 2: Delete the subscriber using their ID (Primary Key)
         const deleteParams = {
             TableName: "Subscribers",
-            Key: { id: subscriberId }, // Use the primary key
+            Key: { id: subscriberId },
         };
 
         await dynamoDb.send(new DeleteCommand(deleteParams));
