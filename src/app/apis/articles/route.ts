@@ -4,9 +4,9 @@ import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { v4 as uuidv4 } from 'uuid';
 
 import { NextRequest, NextResponse } from "next/server";
-import cloudinary from "@/lib/cloudinary";
-import { UploadApiResponse } from "cloudinary";
 import { S3ClientConfig } from "@/lib/s3bucket.config";
+import { SESClientConfig } from "@/lib/sesclient.config";
+import { SendEmailCommand } from "@aws-sdk/client-ses";
 
 export const runtime = 'nodejs';
 

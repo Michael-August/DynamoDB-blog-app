@@ -1,11 +1,32 @@
 import { dynamoDb } from "@/lib/dynamo";
-import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
 import { SESClientConfig } from "@/lib/sesclient.config";
+import moment from "moment";
 
 export const runtime = 'nodejs';
+
+export async function GET() {
+  try {
+    // Fetch all subscribers
+    const command = new ScanCommand({ TableName: "Subscribers" });
+    const result = await dynamoDb.send(command);
+
+    return NextResponse.json({
+      subscribers: result.Items || [],
+      message: "Subscribers fetched successfully",
+      success: true,
+    }, { status: 200 });
+
+  } catch (error: unknown) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "An unknown error occurred", success: false },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req: Request) { 
     try {
@@ -146,7 +167,8 @@ export async function POST(req: Request) {
                                         </a>
                                     </div>
                                     <div class="footer">
-                                        <p>&copy; 2025 Ewere.tech. All Rights Reserved.</p>
+                                        <p>&copy; ${moment().year()} Ewere.tech. All Rights Reserved.</p>
+                                        <p><a href="http://ewere.tech/unsubscribe?email=${email}" class="unsubscribe">Unsubscribe</a></p>
                                     </div>
                                     </div>
                                 </body>
@@ -177,3 +199,50 @@ export async function POST(req: Request) {
         }
     }
 }
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const email = searchParams.get("email");
+
+        if (!email) {
+            return NextResponse.json({ message: "Email is required.", success: false }, { status: 400 });
+        }
+
+        // Step 1: Query to find the subscriber's ID using the email-index GSI
+        const queryParams = {
+            TableName: "Subscribers",
+            IndexName: "email-index",
+            KeyConditionExpression: "email = :email",
+            ExpressionAttributeValues: {
+                ":email": email,
+            },
+        };
+
+        const queryCommand = new QueryCommand(queryParams);
+        const queryResult = await dynamoDb.send(queryCommand);
+
+        if (!queryResult.Items || queryResult.Items.length === 0) {
+            return NextResponse.json({ message: "Subscriber not found.", success: false }, { status: 404 });
+        }
+
+        // Get the subscriber's unique ID
+        const subscriberId = queryResult.Items[0].id;
+
+        // Step 2: Delete the subscriber using their ID (Primary Key)
+        const deleteParams = {
+            TableName: "Subscribers",
+            Key: { id: subscriberId }, // Use the primary key
+        };
+
+        await dynamoDb.send(new DeleteCommand(deleteParams));
+
+        return NextResponse.json({ message: "You have been unsubscribed.", success: true }, { status: 200 });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({ error: error.message, success: false }, { status: 500 });
+        }
+        return NextResponse.json({ error: "An unknown error occurred.", success: false }, { status: 500 });
+    }
+}
+
