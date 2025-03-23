@@ -235,7 +235,7 @@ export async function DELETE(req: Request, { params }: { params: { slug: string 
 }
 
 async function sendEmailNotifications(subscribers: any[], content: string, title: string, slug: string) {
-  const websiteUrl = "https://ewere.tech";
+  const websiteUrl = "https://www.ewere.tech";
   const articleUrl = `${websiteUrl}/blog/${slug}`;
 
   for (const subscriber of subscribers) {

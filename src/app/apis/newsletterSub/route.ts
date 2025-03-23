@@ -160,7 +160,7 @@ export async function POST(req: Request) {
                                             with the latest news and updates.
                                         </p>
                                         <a
-                                            href="https://ewere.tech"
+                                            href="https://www.ewere.tech/"
                                             class="button"
                                         >
                                             Visit Our Website
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
                                     </div>
                                     <div class="footer">
                                         <p>&copy; ${moment().year()} Ewere.tech. All Rights Reserved.</p>
-                                        <p><a href="http://ewere.tech/unsubscribe?email=${email}" class="unsubscribe">Unsubscribe</a></p>
+                                        <p><a href="https://www.ewere.tech//unsubscribe?email=${email}" class="unsubscribe">Unsubscribe</a></p>
                                     </div>
                                     </div>
                                 </body>
