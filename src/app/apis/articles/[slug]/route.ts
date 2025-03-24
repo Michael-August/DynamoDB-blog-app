@@ -176,24 +176,33 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
       }, { status: 404 });
     }
 
-    if (status === 'published') {
-      // **Fetch all subscribers**
-      const subscribersCommand = new ScanCommand({ TableName: "Subscribers" });
-      const subscribersResult = await dynamoDb.send(subscribersCommand);
-      const subscribers = subscribersResult.Items?.map(item => unmarshall(item)) || [];
-
-      if (subscribers.length > 0) {
-        await sendEmailNotifications(subscribers, data.Attributes?.content, data.Attributes?.title as string, slug);
-      }
-    }
-
-    // Return the updated article
-    return NextResponse.json({
+    const response = NextResponse.json({
       updatedArticle: data.Attributes,
       message: "Status updated successfully",
       success: true,
       status: 200,
     });
+
+    // **Send Emails in the Background**
+    if (status === 'published') {
+      Promise.resolve().then(async () => {
+        try {
+          // Fetch all subscribers
+          const subscribersCommand = new ScanCommand({ TableName: "Subscribers" });
+          const subscribersResult = await dynamoDb.send(subscribersCommand);
+          const subscribers = subscribersResult.Items?.map(item => unmarshall(item)) || [];
+
+          if (subscribers.length > 0) {
+            await sendEmailNotifications(subscribers, data.Attributes?.content, data.Attributes?.title as string, slug);
+          }
+        } catch (error) {
+          console.error("Error sending emails:", error);
+        }
+      });
+    }
+
+    // Return the updated article
+    return response;
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message, success: false, status: 500 }, { status: 500 });
