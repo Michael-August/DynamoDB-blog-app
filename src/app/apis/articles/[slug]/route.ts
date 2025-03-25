@@ -299,7 +299,7 @@ async function sendEmailNotifications(subscribers: any[], content: string, title
   }
 }
 
-export async function sendEmailsToSubscribers(title: string, content: string, slug: string) {
+async function sendEmailsToSubscribers(title: string, content: string, slug: string) {
   console.log("Fetching subscribers for email notification...");
 
   // **Fetch all subscribers**
