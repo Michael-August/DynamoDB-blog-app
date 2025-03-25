@@ -183,22 +183,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
       status: 200,
     });
 
-    // **Send Emails in the Background**
-    if (status === 'published') {
-      Promise.resolve().then(async () => {
-        try {
-          // Fetch all subscribers
-          const subscribersCommand = new ScanCommand({ TableName: "Subscribers" });
-          const subscribersResult = await dynamoDb.send(subscribersCommand);
-          const subscribers = subscribersResult.Items?.map(item => unmarshall(item)) || [];
-
-          if (subscribers.length > 0) {
-            await sendEmailNotifications(subscribers, data.Attributes?.content, data.Attributes?.title as string, slug);
-          }
-        } catch (error) {
-          console.error("Error sending emails:", error);
-        }
-      });
+    // **Trigger Background Job After Response**
+    if (status === "published") {
+      setTimeout(async () => {
+        await sendEmailsToSubscribers(data.Attributes?.title, data.Attributes?.content, data.Attributes?.slug);
+      }, 0);
     }
 
     // Return the updated article
@@ -308,4 +297,20 @@ async function sendEmailNotifications(subscribers: any[], content: string, title
       console.error(`Failed to send email to ${subscriber.email}:`, error);
     }
   }
+}
+
+export async function sendEmailsToSubscribers(title: string, content: string, slug: string) {
+  console.log("Fetching subscribers for email notification...");
+
+  // **Fetch all subscribers**
+  const subscribersCommand = new ScanCommand({ TableName: "Subscribers" });
+  const subscribersResult = await dynamoDb.send(subscribersCommand);
+  const subscribers = subscribersResult.Items || [];
+
+  if (subscribers.length === 0) {
+    console.log("No subscribers found.");
+    return;
+  }
+
+  sendEmailNotifications(subscribers, content, title, slug);
 }
