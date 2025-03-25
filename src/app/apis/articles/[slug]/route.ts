@@ -305,7 +305,7 @@ async function sendEmailsToSubscribers(title: string, content: string, slug: str
   // **Fetch all subscribers**
   const subscribersCommand = new ScanCommand({ TableName: "Subscribers" });
   const subscribersResult = await dynamoDb.send(subscribersCommand);
-  const subscribers = subscribersResult.Items || [];
+  const subscribers = subscribersResult.Items?.map(item => unmarshall(item)) || [];
 
   if (subscribers.length === 0) {
     console.log("No subscribers found.");
