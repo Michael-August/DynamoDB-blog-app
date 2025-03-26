@@ -293,6 +293,7 @@ async function sendEmailNotifications(subscribers: any[], content: string, title
 
     try {
       await SESClientConfig.send(new SendEmailCommand(emailParams));
+      console.log(`Email sent to ${subscriber.email}`);
     } catch (error) {
       console.error(`Failed to send email to ${subscriber.email}:`, error);
     }
