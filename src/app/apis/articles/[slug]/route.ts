@@ -236,68 +236,87 @@ async function sendEmailNotifications(subscribers: any[], content: string, title
   const websiteUrl = "https://www.ewere.tech";
   const articleUrl = `${websiteUrl}/blog/${slug}`;
 
-  for (const subscriber of subscribers) {
-    const emailParams = {
-      Destination: { ToAddresses: [subscriber.email] },
-      Message: {
-        Body: {
-          Html: {
-            Charset: "UTF-8",
-            Data: `
-              <!DOCTYPE html>
-              <html>
-              <head>
-                <style>
-                  body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                  }
-                  .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-                  .button { display: inline-block; padding: 10px 20px; background: black; color: white !important; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
-                  .privacy { margin-top: 10px; color: white !important; font-size: 12px; }
-                  .footer {
-                    text-align: center;
-                    padding: 15px 0;
-                    border-top: 1px solid #333;
-                    font-size: 14px;
-                    color: #bbb;
-                    background: black;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="container">
-                  <p>Hey ${subscriber.fullName},</p>
-                  <p>We've just published a new article that you might be interested in!</p>
-                  <h2>${title}</h2>
-                  <p>${content.slice(3, 300)}... <a href="${articleUrl}">Read more</a></p>
-                  <a href="${articleUrl}" class="button">Read Now</a>
-                  <div class="footer">
-                    <p>&copy; ${moment().year()} Ewere.tech. All Rights Reserved.</p>
-                    <div class='privacy'>
-                      <a href="${websiteUrl}/terms">Terms of Service</a> | <a href="${websiteUrl}/privacy">Privacy Policy</a>
-                    </div>
-                    <p><a href="http://ewere.tech/unsubscribe?email=${subscriber.email}" class="unsubscribe">Unsubscribe</a></p>
-                  </div>
-                </div>
-              </body>
-              </html>
-            `,
-          },
-        },
-        Subject: { Charset: "UTF-8", Data: `New Article Alert: ${title}` },
-      },
-      Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
-    };
+  const BATCH_SIZE = 14; // SES limit per second
+  const DELAY_BETWEEN_BATCHES = 1000; // 1 second delay
 
-    try {
-      await SESClientConfig.send(new SendEmailCommand(emailParams));
-      console.log(`Email sent to ${subscriber.email}`);
-    } catch (error) {
-      console.error(`Failed to send email to ${subscriber.email}:`, error);
-    }
+  const emailBatches = [];
+
+  // Group subscribers into batches of 14
+  for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+    emailBatches.push(subscribers.slice(i, i + BATCH_SIZE));
   }
+
+  for (const batch of emailBatches) {
+    try {
+      const sendPromises = batch.map((subscriber) => { 
+        const emailParams = {
+          Destination: { ToAddresses: [subscriber.email] },
+          Message: {
+            Body: {
+              Html: {
+                Charset: "UTF-8",
+                Data: `
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <style>
+                      body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                      }
+                      .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+                      .button { display: inline-block; padding: 10px 20px; background: black; color: white !important; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
+                      .privacy { margin-top: 10px; color: white !important; font-size: 12px; }
+                      .footer {
+                        text-align: center;
+                        padding: 15px 0;
+                        border-top: 1px solid #333;
+                        font-size: 14px;
+                        color: #bbb;
+                        background: black;
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="container">
+                      <p>Hey ${subscriber.fullName},</p>
+                      <p>We've just published a new article that you might be interested in!</p>
+                      <h2>${title}</h2>
+                      <p>${content.slice(3, 300)}... <a href="${articleUrl}">Read more</a></p>
+                      <a href="${articleUrl}" class="button">Read Now</a>
+                      <div class="footer">
+                        <p>&copy; ${moment().year()} Ewere.tech. All Rights Reserved.</p>
+                        <div class='privacy'>
+                          <a href="${websiteUrl}/terms">Terms of Service</a> | <a href="${websiteUrl}/privacy">Privacy Policy</a>
+                        </div>
+                        <p><a href="http://ewere.tech/unsubscribe?email=${subscriber.email}" class="unsubscribe">Unsubscribe</a></p>
+                      </div>
+                    </div>
+                  </body>
+                  </html>
+                `,
+              },
+            },
+            Subject: { Charset: "UTF-8", Data: `New Article Alert: ${title}` },
+          },
+          Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
+        };
+
+        return SESClientConfig.send(new SendEmailCommand(emailParams));
+      })
+
+      // Send batch emails in parallel
+      await Promise.all(sendPromises);
+      console.log(`✅ Sent batch of ${batch.length} emails`);
+    } catch (error) {
+      console.error("❌ Batch email sending failed:", error);
+    }
+
+    // Wait 1 second before next batch to respect SES limits
+    await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
+  }
+
 }
 
 async function sendEmailsToSubscribers(title: string, content: string, slug: string) {

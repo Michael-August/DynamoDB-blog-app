@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
     // Apply search filter if search term is provided
     if (search) {
       params.FilterExpression +=
-        " AND (contains(title, :search) OR contains(content, :search))";
+        " AND (contains(slug, :search) OR contains(title, :search))";
       params.ExpressionAttributeValues[":search"] = search;
     }
 
