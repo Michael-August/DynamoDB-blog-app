@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import authorImage from "@/public/images/author-image.jpg"
 import moment from 'moment';
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV, FaSearch } from 'react-icons/fa';
 import { Loader2 } from 'lucide-react';
 
 import {motion} from "framer-motion"
@@ -25,15 +25,21 @@ interface Article {
 const AdminHomePage = () => {
   
   const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const [openActions, setOpenActions] = useState<number | null>(null)
 
   const router = useRouter()
+
+  const debounceDelay = 1000;
   
-  const fetchData = async () => {
+  const fetchData = async (searchValue?: string) => {
+    setLoading(true)
     try {
-      const response = await axios.get('/apis/articles');
+      const response = await axios.get(`/apis/articles?search=${searchValue ? searchValue : ''}`);
       setArticles(response.data?.posts);
     } catch (error: any) {
       toast.error(error.message)
@@ -47,9 +53,28 @@ const AdminHomePage = () => {
     if (!token) {
       router.push('/auth');
     } else {
-      fetchData();
+      fetchData(undefined);
     }
   }, [router]);
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+    setDebouncedSearchTerm(searchTerm);
+    }, debounceDelay);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, debounceDelay]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      const search = async () => {
+        fetchData(debouncedSearchTerm)
+      };
+      search();
+    } else {
+      fetchData()
+    }
+  }, [debouncedSearchTerm]);
 
   const handleViewDetails = (id: string) => {
     // if (!blog) return;
@@ -110,6 +135,16 @@ const AdminHomePage = () => {
 
   return (
     <div className='mb-5'>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.5 }}
+        className='flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400'
+      >
+        <FaSearch />
+        <input placeholder='search articles...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className='bg-transparent focus:outline-none focus:ring-0 w-full' />
+      </motion.div>
       {loading ?
         <div className="mx-auto flex h-64 w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-black" />

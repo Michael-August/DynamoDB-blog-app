@@ -94,11 +94,50 @@ export async function POST(req: Request) {
   }
 }
 
+// export async function GET(req: NextRequest) {
+//   try {
+//     const params = { TableName: "Blog" };
+//     let allItems: any[] = [];
+//     let lastEvaluatedKey = undefined;
+
+//     do {
+//       const command: ScanCommand = new ScanCommand({
+//         ...params,
+//         ExclusiveStartKey: lastEvaluatedKey, // Start where the last scan left off
+//       });
+
+//       const data = await dynamoDb.send(command);
+//       if (data.Items) {
+//         allItems = [...allItems, ...data.Items]; // Append results
+//       }
+
+//       lastEvaluatedKey = data.LastEvaluatedKey; // Check if more data exists
+//     } while (lastEvaluatedKey); // Continue scanning until all items are retrieved
+
+//     return NextResponse.json({
+//       posts: allItems,
+//       message: "Fetch successful",
+//       success: true,
+//       status: 200,
+//     });
+
+//   } catch (error: unknown) {
+//     if (error instanceof Error) {
+//       return NextResponse.json({ error: error.message, success: false, status: 500 });
+//     } else {
+//       return NextResponse.json({ error: "An unknown error occurred", success: false, status: 500 });
+//     }
+//   }
+// }
+
 export async function GET(req: NextRequest) {
   try {
     const params = { TableName: "Blog" };
     let allItems: any[] = [];
     let lastEvaluatedKey = undefined;
+
+    // Extract search query from request URL
+    const searchQuery = req.nextUrl.searchParams.get("search")?.trim().toLowerCase();
 
     do {
       const command: ScanCommand = new ScanCommand({
@@ -113,6 +152,13 @@ export async function GET(req: NextRequest) {
 
       lastEvaluatedKey = data.LastEvaluatedKey; // Check if more data exists
     } while (lastEvaluatedKey); // Continue scanning until all items are retrieved
+
+    // **Apply Search Filtering**
+    if (searchQuery) {
+      allItems = allItems.filter((item) =>
+        item.title?.toLowerCase().includes(searchQuery) // Adjust field as needed
+      );
+    }
 
     return NextResponse.json({
       posts: allItems,
@@ -129,4 +175,5 @@ export async function GET(req: NextRequest) {
     }
   }
 }
+
 
