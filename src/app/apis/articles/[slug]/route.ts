@@ -4,11 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { ReturnValue, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { S3ClientConfig } from "@/lib/s3bucket.config";
-import { SESClientConfig } from "@/lib/sesclient.config";
-import { SendEmailCommand } from "@aws-sdk/client-ses";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import moment from "moment";
 import { test_subscribers } from "../../../../../utils/constants";
+import { addSubscribersToQueue } from "../../../../../utils/helpers";
 
 // GET Request
 export async function GET(req: Request, {params}: { params: { slug: string } }) {
@@ -233,105 +231,6 @@ export async function DELETE(req: Request, { params }: { params: { slug: string 
   }
 }
 
-async function sendEmailNotifications(subscribers: any[], content: string, title: string, slug: string) {
-  const websiteUrl = "https://www.ewere.tech";
-  const articleUrl = `${websiteUrl}/blog/${slug}`;
-
-  const BATCH_SIZE = 50; // SES limit per second
-  const DELAY_BETWEEN_BATCHES = 10000; // 10 seconds delay
-
-  const emailBatches = [];
-
-  let totalEmails = 0;
-  let batchNumber = 0;
-
-  // Group subscribers into batches of 14
-  for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
-    emailBatches.push(subscribers.slice(i, i + BATCH_SIZE));
-  }
-
-  for (const batch of emailBatches) {
-    try {
-      const sendPromises = batch.map((subscriber) => { 
-        try {
-          
-          const emailParams = {
-            Destination: { ToAddresses: [subscriber.email] },
-            Message: {
-              Body: {
-                Html: {
-                  Charset: "UTF-8",
-                  Data: `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                      <style>
-                        body {
-                          font-family: Arial, sans-serif;
-                          margin: 0;
-                          padding: 0;
-                        }
-                        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-                        .button { display: inline-block; padding: 10px 20px; background: black; color: white !important; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
-                        .privacy { margin-top: 10px; color: white !important; font-size: 12px; }
-                        .footer {
-                          text-align: center;
-                          padding: 15px 0;
-                          border-top: 1px solid #333;
-                          font-size: 14px;
-                          color: #bbb;
-                          background: black;
-                        }
-                      </style>
-                    </head>
-                    <body>
-                      <div class="container">
-                        <p>Hey ${subscriber.fullName},</p>
-                        <p>We've just published a new article that you might be interested in!</p>
-                        <h2>${title}</h2>
-                        <p>${content.slice(3, 300)}... <a href="${articleUrl}">Read more</a></p>
-                        <a href="${articleUrl}" class="button">Read Now</a>
-                        <div class="footer">
-                          <p>&copy; ${moment().year()} Ewere.tech. All Rights Reserved.</p>
-                          <div class='privacy'>
-                            <a href="${websiteUrl}/terms">Terms of Service</a> | <a href="${websiteUrl}/privacy">Privacy Policy</a>
-                          </div>
-                          <p><a href="http://ewere.tech/unsubscribe?email=${subscriber.email}" class="unsubscribe">Unsubscribe</a></p>
-                        </div>
-                      </div>
-                    </body>
-                    </html>
-                  `,
-                },
-              },
-              Subject: { Charset: "UTF-8", Data: `New Article Alert: ${title}` },
-            },
-            Source: `Ewere Diagboya <${process.env.SES_VERIFIED_EMAIL}>`,
-          };
-  
-          return SESClientConfig.send(new SendEmailCommand(emailParams));
-        } catch (error) {
-          console.error(`❌ Failed to send email to ${subscriber.email}:`, error);
-        }
-      })
-
-      // Send batch emails in parallel
-      await Promise.all(sendPromises);
-      totalEmails += batch.length;
-      batchNumber += 1;
-      console.log(`✅ Sent batch ${batchNumber} of ${batch.length} emails`);
-    } catch (error) {
-      console.error("❌ Batch email sending failed:", error);
-    }
-
-    // Wait 10 second before next batch to respect SES limits
-    await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
-  }
-
-  console.log(`✅ Sent ${totalEmails} emails to subscribers`);
-
-}
-
 async function sendEmailsToSubscribers(title: string, content: string, slug: string) {
   console.log("Fetching subscribers for email notification...");
 
@@ -345,5 +244,7 @@ async function sendEmailsToSubscribers(title: string, content: string, slug: str
     return;
   }
 
-  sendEmailNotifications(subscribers, content, title, slug);
+  const articleData = { title, content, slug };
+
+  addSubscribersToQueue(subscribers, articleData);
 }
