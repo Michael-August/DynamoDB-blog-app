@@ -1,17 +1,16 @@
 "use client"
 
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-
-import authorImage from "@/public/images/author-image.jpg"
+import { useRouter, useSearchParams } from 'next/navigation';
+import authorImage from "@/public/images/author-image.jpg";
 import moment from 'moment';
 import { FaEllipsisV } from 'react-icons/fa';
 import { Loader2 } from 'lucide-react';
+import { motion } from "framer-motion";
 
-import {motion} from "framer-motion"
 interface Article {
   id: string;
   slug: string;
@@ -23,20 +22,28 @@ interface Article {
 }
   
 const AdminHomePage = () => {
-  
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastKey, setLastKey] = useState<string | null>(null);
+  const [pages, setPages] = useState<Record<number, { articles: Article[]; lastKey: string | null }>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [openActions, setOpenActions] = useState<number | null>(null);
 
-  const [openActions, setOpenActions] = useState<number | null>(null)
-
-  const router = useRouter()
+  const router = useRouter();
+  const searchParams = useSearchParams();
   
-  const fetchData = async () => {
+  const fetchData = async (key?: string, page: number = 1) => {
     try {
-      const response = await axios.get('/apis/articles');
-      setArticles(response.data?.posts);
+      setLoading(true);
+      const response = await axios.get('/apis/articles', { params: { lastKey: key } });
+      const newArticles = response.data?.posts || [];
+      const nextLastKey = response.data?.lastKey || null;
+
+      setPages((prev) => ({ ...prev, [page]: { articles: newArticles, lastKey: nextLastKey } }));
+      setArticles(newArticles);
+      setLastKey(nextLastKey);
     } catch (error: any) {
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -47,9 +54,15 @@ const AdminHomePage = () => {
     if (!token) {
       router.push('/auth');
     } else {
-      fetchData();
+      fetchData(undefined, 1);
     }
   }, [router]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", currentPage.toString());
+    router.push(`/admin?${params.toString()}`, { scroll: false });
+  }, [currentPage]);
 
   const handleViewDetails = (id: string) => {
     // if (!blog) return;
@@ -108,13 +121,39 @@ const AdminHomePage = () => {
     setOpenActions(openActions === index ? null : index)
   }
 
+  const handleNext = () => {
+    if (!lastKey) return;
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    if (pages[nextPage]) {
+      setArticles(pages[nextPage].articles);
+      setLastKey(pages[nextPage].lastKey);
+    } else {
+      fetchData(lastKey, nextPage);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePrevious = () => {
+    if (currentPage === 1) return;
+    const prevPage = currentPage - 1;
+    setCurrentPage(prevPage);
+    if (pages[prevPage]) {
+      setArticles(pages[prevPage].articles);
+      setLastKey(pages[prevPage].lastKey);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className='mb-5'>
-      {loading ?
+      {loading ? (
         <div className="mx-auto flex h-64 w-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-black" />
-        </div> : 
-        <motion.div
+          <Loader2 className="h-8 w-8 animate-spin text-black" />
+        </div>
+      ) : (
+        <>
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
@@ -177,10 +216,14 @@ const AdminHomePage = () => {
           </div>
         ))}
           </motion.div>
-      }
+          <div className="flex justify-between mt-5">
+            <button onClick={handlePrevious} disabled={currentPage === 1} className="px-4 py-2 bg-gray-300 rounded-md">Previous</button>
+            <button onClick={handleNext} disabled={!lastKey} className="px-4 py-2 bg-gray-300 rounded-md">Next</button>
+          </div>
+        </>
+      )}
     </div>
-    
-  )
+  );
 }
 
-export default AdminHomePage
+export default AdminHomePage;

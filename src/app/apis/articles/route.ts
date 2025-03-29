@@ -96,31 +96,25 @@ export async function POST(req: Request) {
 
 export async function GET(req: NextRequest) {
   try {
-    const params = { TableName: "Blog" };
-    let allItems: any[] = [];
-    let lastEvaluatedKey = undefined;
+    const { searchParams } = new URL(req.url);
+    const lastKey = searchParams.get("lastKey");
 
-    do {
-      const command: ScanCommand = new ScanCommand({
-        ...params,
-        ExclusiveStartKey: lastEvaluatedKey, // Start where the last scan left off
-      });
+    const params = {
+      TableName: "Articles",
+      Limit: 20, // Adjust the limit as needed
+      ExclusiveStartKey: lastKey ? JSON.parse(decodeURIComponent(lastKey)) : undefined,
+    };
 
-      const data = await dynamoDb.send(command);
-      if (data.Items) {
-        allItems = [...allItems, ...data.Items]; // Append results
-      }
-
-      lastEvaluatedKey = data.LastEvaluatedKey; // Check if more data exists
-    } while (lastEvaluatedKey); // Continue scanning until all items are retrieved
+    const command = new ScanCommand(params);
+    const data = await dynamoDb.send(command);
 
     return NextResponse.json({
-      posts: allItems,
+      posts: data.Items || [],
+      lastKey: data.LastEvaluatedKey ? encodeURIComponent(JSON.stringify(data.LastEvaluatedKey)) : null,
       message: "Fetch successful",
       success: true,
       status: 200,
     });
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message, success: false, status: 500 });

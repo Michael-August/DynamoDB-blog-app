@@ -2,64 +2,53 @@
 
 import BlogCard from "@/components/BlogCard";
 import { motion } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 import CardSkeletonLoader from "@/components/Skeletons/ArticleCardskeleton";
-import Pagination from "@/components/Pagination";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function Home() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastKey, setLastKey] = useState<string | null>(null);
-  const [previousKeys, setPreviousKeys] = useState<string[]>([]); // Stack to track previous pages
+  // const [previousKeys, setPreviousKeys] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string>("");
-
+  const [pages, setPages] = useState<Record<number, any[]>>({}); // Store pages by page number
+  const [lastKeys, setLastKeys] = useState<Record<number, string | null>>({}); // Store lastKeys per page
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const [topTags, setTopTags] = useState<string[]>([]);
-  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const debounceDelay = 1000;
 
   /** Fetch articles */
-  const fetchData = async (searchValue?: string, newLastKey?: string | null, resetPagination: boolean = false) => {
+  const fetchData = async (searchValue?: string, newLastKey?: string | null, newPage: number = 1) => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams();
 
-      if (newLastKey) {
-        queryParams.append("lastKey", newLastKey);
-      }
-
-      if (searchValue) {
-        queryParams.append("search", searchValue);
-      }
-
-      if (selectedTags) {
-        queryParams.append("tag", selectedTags);
-      }
+      if (newLastKey) queryParams.append("lastKey", newLastKey);
+      if (searchValue) queryParams.append("search", searchValue);
+      if (selectedTags) queryParams.append("tag", selectedTags);
 
       const response = await axios.get(`/apis/public?${queryParams.toString()}`);
       const newPosts = response.data?.posts || [];
       const nextLastKey = response.data?.lastKey || null;
 
-      if (resetPagination) {
-        setArticles(newPosts);
-        setPreviousKeys([]); // Reset history when search/tag changes
-      } else {
-        setArticles(newLastKey ? newPosts : [...articles, ...newPosts]);
-      }
+      // Store lastKey for this page
+      setLastKeys((prev) => ({ ...prev, [newPage]: nextLastKey }));
 
-      setLastKey(nextLastKey);
+      // Store fetched articles in cache
+      setPages((prev) => ({ ...prev, [newPage]: newPosts }));
+
+      setArticles(newPosts);
+      setLastKey(nextLastKey); // Update current lastKey
     } catch (error: any) {
       console.error(error);
       toast.error(`${error.message}`);
@@ -68,32 +57,49 @@ export default function Home() {
     }
   };
 
-  const computedTags = useMemo(() => {
-    const tagFrequency = articles
-      .flatMap((article: any) => article.tags)
-      .reduce<Record<string, number>>((acc, tag) => {
-        acc[tag] = (acc[tag] || 0) + 1;
-        return acc;
-      }, {});
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    params.set("page", currentPage.toString());
+    if (selectedTags) params.set("tag", selectedTags);
+    if (debouncedSearchTerm) params.set("search", debouncedSearchTerm);
 
-    return Object.entries(tagFrequency)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 15)
-      .map(([tag]) => tag);
-  }, [articles]);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    router.refresh()
+  }, [currentPage, selectedTags, debouncedSearchTerm]);
 
-  /** Handle pagination */
+  // Load Next Page
   const loadNextPage = () => {
-    if (!lastKey) return;
-    setPreviousKeys((prev) => [...prev, lastKey]); // Save the current key before moving forward
-    fetchData(debouncedSearchTerm, lastKey);
+    if (!lastKey) return; // Stop if lastKey is not available
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    
+    if (pages[nextPage]) {
+      // If cached, use stored articles
+      setArticles(pages[nextPage]);
+    } else {
+      // If not cached, fetch from API
+      fetchData(debouncedSearchTerm, lastKey, nextPage);
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top smoothly
   };
 
+  // Load Previous Page
   const loadPreviousPage = () => {
-    if (previousKeys.length === 0) return;
-    const prevLastKey = previousKeys.pop(); // Remove the last key from history
-    setPreviousKeys([...previousKeys]); // Update history
-    fetchData(debouncedSearchTerm, prevLastKey || null);
+    if (currentPage === 1) return; // No previous page at first page
+    const prevPage = currentPage - 1;
+    setCurrentPage(prevPage);
+
+    if (pages[prevPage]) {
+      setArticles(pages[prevPage]); // Use cached data
+    }
+
+    if (!lastKey) {
+      setLastKey(lastKeys[currentPage - 1])
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top smoothly
   };
 
   /** Handle search with debounce */
@@ -105,56 +111,31 @@ export default function Home() {
   }, [searchTerm, debounceDelay]);
 
   useEffect(() => {
-    fetchData(debouncedSearchTerm, null, true);
-  }, [debouncedSearchTerm]);
+    fetchData(debouncedSearchTerm, null, 1);
+  }, [debouncedSearchTerm, selectedTags]);
 
-  /** Handle tag changes */
-  useEffect(() => {
-    fetchData(undefined, null, true);
-  }, [selectedTags]);
-
-  useEffect(() => {
-    // Default title for the home page
-    if (pathname === '/') {
-        document.title = "Home for all DevOps, AWS and Cloud-native Content";
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    if (topTags.length === 0 && articles.length > 0) {
-      setTopTags(computedTags);
-    }
-  }, [computedTags, topTags, articles]);
-
-  // Get tags from URL on initial render
+  /** Get page number and tag from URL on initial load */
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tagFromUrl = urlParams.get("tag");
+    const pageFromUrl = urlParams.get("page");
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Force page to be 1 on refresh
+    if (pageFromUrl !== "1") {
+      params.set("page", "1");
+      setCurrentPage(1);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+
     setSelectedTags(tagFromUrl as string);
   }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (selectedTags) {
-      params.set("tag", selectedTags);
-    }
-    router.push(`?${params.toString()}`, { scroll: false });
-  }, [selectedTags, router]);
-
-  // Toggle tag selection
-  const selectTag = (tag: string) => {
-    setSelectedTags(tag);
-  };
 
   return (
     <div>
       {/* Search Bar */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.5 }}
-        className="flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400">
+      <motion.div className="flex items-center gap-4 px-3 py-2 rounded-xl mb-3 w-full border border-gray-400">
         <FaSearch />
         <input
           placeholder="Search articles..."
@@ -164,76 +145,31 @@ export default function Home() {
           className="bg-transparent focus:outline-none focus:ring-0 w-full"
         />
       </motion.div>
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-wrap my-10 gap-4 border-b border-gray-300 pb-2"
-      >
-        {[...topTags, "events"].filter(tag => tag !== 'announcement').map((tag) => (
-          <motion.a
-            key={tag}
-            // onClick={() => selectTag(tag)}
-            onMouseEnter={() => setHoveredTag(tag)}
-            onMouseLeave={() => setHoveredTag(null)}
-            href={`/tag/${tag}`}
-            className={`relative cursor-pointer text-sm font-medium transition-colors ${
-              selectedTags === tag ? "text-black" : "text-gray-600 hover:text-black"
-            }`}
-            whileTap={{ scale: 0.95 }}
-          >
-            {tag}
-            {(selectedTags === tag || hoveredTag === tag) && (
-              <motion.div
-                layoutId="underline"
-                className="absolute left-0 -bottom-2 h-[2px] w-full bg-black"
-                initial={{ opacity: 0, y: 2 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 2 }}
-                transition={{ duration: 0.2 }}
-              />
-            )}
-          </motion.a>
-        ))}
-      </motion.div>
 
       {/* Articles */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.5 }}
-        className="articles px-4 py-5 mb-10">
-        <div className="top flex items-center gap-4 text-black mb-10">
-          <span className="font-semibold text-base lg:text-3xl">
-            Home for all DevOps, AWS, and Cloud-native Content
-          </span>
-        </div>
-
-        {loading ? (
-          <CardSkeletonLoader />
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-            {articles.map((article: any) => (
-              <BlogCard blog={article} key={article.id} />
-            ))}
+      <motion.div className="articles px-4 py-5 mb-10">
+        {loading ? <CardSkeletonLoader /> : (
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            {articles.map((article: any) => <BlogCard blog={article} key={article.id} />)}
           </motion.div>
         )}
       </motion.div>
 
-      {/* Pagination */}
-      <Pagination
-        onNext={loadNextPage}
-        onPrevious={loadPreviousPage}
-        canGoNext={!!lastKey}
-        canGoPrevious={previousKeys.length > 0}
-      />
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4">
+        <button 
+          onClick={loadPreviousPage} 
+          disabled={currentPage === 1} 
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
+          Previous
+        </button>
+        <button 
+          onClick={loadNextPage} 
+          disabled={!lastKey} 
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">
+          Next
+        </button>
+      </div>
     </div>
   );
 }

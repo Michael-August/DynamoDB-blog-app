@@ -5,25 +5,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = 'nodejs';
 
+const ITEMS_PER_PAGE = 20;
+
 export async function GET(req: NextRequest) {
   try {
     const search = req.nextUrl.searchParams.get("search");
     const lastEvaluatedKey = req.nextUrl.searchParams.get("lastKey");
-    const tagsParam = req.nextUrl.searchParams.get("tag"); // Get tags from query
+    const tagsParam = req.nextUrl.searchParams.get("tag");
 
     // Base parameters for query
     const params: any = {
       TableName: "Articles",
-      IndexName: "CreatedAt-index", // Use the GSI for pagination
+      IndexName: "CreatedAt-index", // ✅ Use GSI for sorting
       KeyConditionExpression: "#status = :status",
       ExpressionAttributeNames: { "#status": "status" },
-      ExpressionAttributeValues: { ":status": "published" }, // ✅ Use plain string, not `{ S: "published" }`
-      ScanIndexForward: false, // Sort by createdAt DESC
-      Limit: 20,
+      ExpressionAttributeValues: { ":status": "published" },
+      ScanIndexForward: false, // ✅ Sort by createdAt DESC
+      Limit: ITEMS_PER_PAGE,
     };
 
     let filterConditions: string[] = [];
-    
+
     // Apply search filter if provided
     if (search) {
       filterConditions.push("contains(title, :search) OR contains(content, :search)");
@@ -42,18 +44,29 @@ export async function GET(req: NextRequest) {
     }
 
     if (lastEvaluatedKey) {
-      params.ExclusiveStartKey = JSON.parse(lastEvaluatedKey);
+      params.ExclusiveStartKey = JSON.parse(decodeURIComponent(lastEvaluatedKey));
     }
 
     // Run the paginated query
-    const paginatedCommand = new QueryCommand(params);
-    const paginatedData = await dynamoDb.send(paginatedCommand);
+    let paginatedData = await dynamoDb.send(new QueryCommand(params));
 
-    // Get total count (Option 1: Scan with COUNT)
+    // 🔥 Fetch more if filtering reduced the count below the page size
+    while ((paginatedData.Items ?? []).length < ITEMS_PER_PAGE && paginatedData.LastEvaluatedKey) {
+      params.ExclusiveStartKey = paginatedData.LastEvaluatedKey;
+      const nextData = await dynamoDb.send(new QueryCommand(params));
+      (paginatedData.Items ?? []).push(...(nextData.Items ?? []));
+      paginatedData.LastEvaluatedKey = nextData.LastEvaluatedKey;
+    }
+
+    // 🔥 Count ALL published articles (for pagination numbers)
     const countCommand = new ScanCommand({
       TableName: "Articles",
       Select: "COUNT",
+      FilterExpression: "#status = :status",
+      ExpressionAttributeNames: { "#status": "status" },
+      ExpressionAttributeValues: { ":status": "published" },
     });
+
     const countData = await dynamoDb.send(countCommand);
     const total = countData.Count || 0;
 
@@ -61,10 +74,10 @@ export async function GET(req: NextRequest) {
       {
         posts: paginatedData.Items,
         lastKey: paginatedData.LastEvaluatedKey
-          ? JSON.stringify(paginatedData.LastEvaluatedKey)
+          ? encodeURIComponent(JSON.stringify(paginatedData.LastEvaluatedKey))
           : null,
-        limit: 20,
-        total, // Total count of articles
+        limit: ITEMS_PER_PAGE,
+        total, // ✅ Total count of ALL published articles
         message: "Fetch successful",
         success: true,
         status: 200,
