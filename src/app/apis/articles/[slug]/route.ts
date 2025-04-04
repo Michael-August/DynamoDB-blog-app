@@ -138,7 +138,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
   try {
     // Parse JSON body
     const body = await req.json();
-    const { status, id, createdAt } = body;
+    const { status, id, sendEmail, createdAt } = body;
 
     // Validate the status field
     if (!status || typeof status !== 'string') {
@@ -183,7 +183,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
     });
 
     // **Trigger Background Job After Response**
-    if (status === "published") {
+    if (status === "published" && sendEmail) {
       setTimeout(async () => {
         await sendEmailsToSubscribers(data.Attributes?.title, data.Attributes?.content, data.Attributes?.slug);
       }, 0);

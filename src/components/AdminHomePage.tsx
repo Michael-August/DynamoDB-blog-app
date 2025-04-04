@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import authorImage from "@/public/images/author-image.jpg"
 import moment from 'moment';
 import { FaEllipsisV, FaSearch } from 'react-icons/fa';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 
 import {motion} from "framer-motion"
 interface Article {
@@ -31,6 +31,17 @@ const AdminHomePage = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const [openActions, setOpenActions] = useState<number | null>(null)
+
+  const [openPublishModal, setOpenPublishModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+
+  const [articleToPublish, setArticleToPublish] = useState<Article | null>(null)
+  const [articleToDelete, setArticleToDelete] = useState<Article | null>(null)
+
+  const [sendEmail, setSendEmail] = useState(false)
+  
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const router = useRouter()
 
@@ -83,6 +94,7 @@ const AdminHomePage = () => {
 
   const handleDelete = async (slug: string, articleId: string, createdAt: any) => {
     const deleteToastId = toast.info("Deleting...", { autoClose: false });
+    setIsDeleting(true)
     try {
 
       await axios({method: "delete", url: `/apis/articles/${slug}`, data: {id: articleId, createdAt}});
@@ -99,15 +111,22 @@ const AdminHomePage = () => {
         autoClose: 2000,
       });
       console.error("Error deleting resource:", error.message);
+    } finally {
+      setIsDeleting(false)
+      setArticleToDelete(null)
+      setOpenDeleteModal(false)
     }
   };
 
   const handleStatusUpate = async (slug: string, status: "published" | "unpublished", articleId: string, createdAt: any) => {
 
     const updateToastId = toast.info("Updating...", { autoClose: false });
+    if (status === "published") {
+      setIsPublishing(true)
+    } 
     try {
 
-      await axios({method: "patch", url: `/apis/articles/${slug}`, data: {status, id: articleId, createdAt}});
+      await axios({method: "patch", url: `/apis/articles/${slug}`, data: {status, sendEmail, id: articleId, createdAt}});
 
       toast.dismiss(updateToastId);
 
@@ -121,6 +140,11 @@ const AdminHomePage = () => {
         autoClose: 2000,
       });
       console.error("Error updating resource:", error.message);
+    } finally {
+      setIsPublishing(false)
+      setSendEmail(false)
+      setArticleToPublish(null)
+      setOpenPublishModal(false)
     }
   }
 
@@ -171,12 +195,12 @@ const AdminHomePage = () => {
                 <div className="menu-options absolute top-0 right-0 z-50">
                   {openActions === index && 
                   <div className="bg-white flex flex-col gap-3 transition-all py-2 px-4 shadow-lg">
-                      <span onClick={() => handleDelete(article.slug, article.id, article.createdAt)} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
+                      <span onClick={() => { setArticleToDelete(article); setOpenDeleteModal(true)}} className="transition-all hover:bg-red-800 hover:text-white text-red p-2 -mx-4 cursor-pointer">Delete Article</span>
                       <span onClick={() => handleEdit(article.slug)} className="transition-all hover:bg-yellow-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Edit Article</span>
                       {article.status === "published" ?
                         <span onClick={() => handleStatusUpate(article.slug, "unpublished", article.id, article?.createdAt)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Unpublish Article</span>
                         :
-                        <span onClick={() => handleStatusUpate(article.slug, "published", article.id, article?.createdAt)} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
+                        <span onClick={() => { setArticleToPublish(article); setOpenPublishModal(true)}} className="transition-all hover:bg-green-600 hover:text-white text-black p-2 -mx-4 cursor-pointer">Publish Article</span>
 
                       }
                   </div>}
@@ -212,6 +236,78 @@ const AdminHomePage = () => {
           </div>
         ))}
           </motion.div>
+      }
+
+      {openPublishModal &&
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          style={{background: "rgba(0, 0, 0, 0.7)"}}
+          className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        >
+          <div className="bg-white p-6 rounded-lg shadow-2xl w-96">
+            <div className="flex items-end justify-end">
+              <X onClick={() => { setOpenPublishModal(false); setArticleToPublish(null)}} className="cursor-pointer hover:scale-110 transition-all" />
+            </div>
+            <p className="text-base font-bold mb-4">{ articleToPublish?.title }</p>
+            <label className="flex items-center gap-3 mb-4 cursor-pointer group">
+              <input
+                type="checkbox"
+                name="sendEmail"
+                checked={sendEmail}
+                onChange={(e) => setSendEmail(e.target.checked)}
+                className="peer hidden"
+              />
+              <div className="w-5 h-5 rounded-md border-2 border-gray-300 peer-checked:border-black peer-checked:bg-black flex items-center justify-center transition-colors duration-200">
+                {sendEmail && (
+                  <svg
+                    className="w-3.5 h-3.5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-sm text-gray-700 group-hover:text-black transition-colors duration-200">
+                Do you want to send an email on publish of this article?
+              </span>
+            </label>
+            <div className='flex items-center justify-between'>
+              <button onClick={() => { setOpenPublishModal(false); setArticleToPublish(null)}} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
+              <button onClick={() => handleStatusUpate(articleToPublish?.slug as string, "published" ,articleToPublish?.id as string, articleToPublish?.createdAt)} className="px-4 py-2 bg-red-800 text-white rounded-md">
+                {isPublishing ? <Loader2 className="h-8 w-8 animate-spin text-white" /> : "Publish"}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      }
+
+      {openDeleteModal &&
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          style={{background: "rgba(0, 0, 0, 0.7)"}}
+          className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        >
+          <div className="bg-white p-6 rounded-lg shadow-2xl w-96">
+            <div className="flex items-end justify-end">
+              <X onClick={() => { setOpenDeleteModal(false); setArticleToDelete(null)}} className="cursor-pointer hover:scale-110 transition-all" />
+            </div>
+            <p className="text-sm">Are you sure you want to delete this article;</p>
+            <p className="text-base font-bold mb-4">{ articleToDelete?.title }</p>
+            <div className='flex items-center justify-between'>
+              <button onClick={() => { setOpenDeleteModal(false); setArticleToDelete(null)}} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
+              <button onClick={() => handleDelete(articleToDelete?.slug as string, articleToDelete?.id as string, articleToDelete?.createdAt)} className="px-4 py-2 bg-red-800 text-white rounded-md">
+                {isDeleting ? <Loader2 className="h-8 w-8 animate-spin text-white" /> : "Delete"}
+              </button>
+            </div>
+          </div>
+        </motion.div>
       }
     </div>
     
